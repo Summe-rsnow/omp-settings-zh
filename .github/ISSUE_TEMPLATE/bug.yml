@@ -1,0 +1,56 @@
+name: Bug
+about: 报告插件行为或设置显示错误
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: 请勿粘贴完整 config.yml、API Key、token、会话或未脱敏日志。安全问题请使用 GitHub Security 私密报告。
+  - type: input
+    id: omp-version
+    attributes:
+      label: OMP 版本
+      placeholder: 18.0.4
+    validations:
+      required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: 插件版本
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: 安装方式
+      options:
+        - github:rockythink/omp-settings-zh
+        - omp plugin link
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 最小复现步骤
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期行为
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际行为与脱敏日志
+    validations:
+      required: true
+  - type: dropdown
+    id: english-fallback
+    attributes:
+      label: 禁用插件后能否打开英文 /settings
+      options: [能, 不能, 未验证]
+    validations:
+      required: true

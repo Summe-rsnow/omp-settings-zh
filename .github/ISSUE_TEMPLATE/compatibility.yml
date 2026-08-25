@@ -1,0 +1,45 @@
+name: OMP 兼容性
+about: 报告 OMP 版本或内部结构变化导致的失败关闭
+title: "[Compatibility] "
+labels: [compatibility, upstream-change]
+body:
+  - type: input
+    id: omp-version
+    attributes:
+      label: OMP 版本
+    validations:
+      required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: 插件版本
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: 操作系统与终端
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: 安装方式
+      options:
+        - github:rockythink/omp-settings-zh
+        - omp plugin link
+    validations:
+      required: true
+  - type: textarea
+    id: warning
+    attributes:
+      label: 完整兼容提示或脱敏日志
+    validations:
+      required: true
+  - type: dropdown
+    id: usable
+    attributes:
+      label: 官方英文 /settings 是否仍可使用
+      options: [能, 不能, 未验证]
+    validations:
+      required: true

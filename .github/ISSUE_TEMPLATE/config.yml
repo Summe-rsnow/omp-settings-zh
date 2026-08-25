@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 私密安全报告
+    url: https://github.com/rockythink/omp-settings-zh/security/advisories/new
+    about: 凭据、配置、启动安全或非预期代码执行问题

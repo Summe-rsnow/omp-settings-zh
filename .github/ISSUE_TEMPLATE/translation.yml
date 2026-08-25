@@ -1,0 +1,38 @@
+name: 误译或术语建议
+about: 报告不准确、过度翻译或不一致的设置文案
+title: "[Translation] "
+labels: [translation]
+body:
+  - type: input
+    id: path
+    attributes:
+      label: 设置路径或选项 value
+      placeholder: compaction.methodOrder / snapcompact
+    validations:
+      required: true
+  - type: textarea
+    id: upstream
+    attributes:
+      label: OMP 18.0.4 官方英文原文
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: 当前译文
+    validations:
+      required: true
+  - type: textarea
+    id: suggested
+    attributes:
+      label: 建议译文与理由
+      description: 说明行为语义、术语依据，以及是否应保留英文产品名或技术名词。
+    validations:
+      required: true
+  - type: checkboxes
+    id: source
+    attributes:
+      label: 来源确认
+      options:
+        - label: 建议仅依据 OMP 官方英文原文独立提出，未复制第三方中文译文
+          required: true
