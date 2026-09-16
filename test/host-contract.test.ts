@@ -10,7 +10,7 @@ import { getAllSettingDefs } from "@oh-my-pi/pi-coding-agent/modes/components/se
 
 describe("OMP 18 host contract", () => {
   test("required exports resolve with the expected top-level structure", () => {
-    expect(VERSION).toBe("18.0.4");
+    expect(VERSION).toBe("18.2.1");
     expect(SETTING_TABS.length).toBeGreaterThan(0);
     expect(Object.keys(SETTINGS_SCHEMA).length).toBeGreaterThan(0);
 

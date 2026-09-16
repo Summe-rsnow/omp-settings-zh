@@ -2,7 +2,7 @@ import type { LocalePack } from "./types";
 
 export const zhCN = {
   "locale": "zh-CN",
-  "sourceOmpVersion": "18.0.4",
+  "sourceOmpVersion": "18.2.1",
   "tabs": {
     "appearance": "外观",
     "model": "模型",
@@ -42,7 +42,8 @@ export const zhCN = {
       "Startup & Updates": "启动与更新",
       "Power (macOS)": "电源（macOS）",
       "Agent": "Agent",
-      "Git": "Git"
+      "Git": "Git",
+      "Power": "电源"
     },
     "context": {
       "General": "常规",
@@ -54,7 +55,8 @@ export const zhCN = {
       "General": "常规",
       "Auto-Learn": "自动学习",
       "Mnemopi": "Mnemopi",
-      "Hindsight": "Hindsight"
+      "Hindsight": "Hindsight",
+      "Sharpshooter": "Sharpshooter"
     },
     "files": {
       "Editing": "编辑",
@@ -100,9 +102,9 @@ export const zhCN = {
       "description": "自动恢复当前目录中最近的会话"
     },
     "power.sleepPrevention": {
-      "sourceHash": "5982e5a475f856ca91337764ad0406d6e0bf06391934f64557e86a8f69aa0c0d",
+      "sourceHash": "f5493aa7f9bdab68b1e4d5cbb745f6c3925423f42c5e68232ea23a2d3b2f51dd",
       "label": "阻止睡眠",
-      "description": "在活跃会话期间阻止 macOS 睡眠。各级别效果会累加，即包含所有更低级别的标志",
+      "description": "在活跃会话期间阻止系统睡眠；各级别效果会累加，即包含所有更低级别的标志",
       "options": {
         "off": {
           "label": "关闭",
@@ -110,15 +112,15 @@ export const zhCN = {
         },
         "idle": {
           "label": "阻止空闲睡眠",
-          "description": "会话打开期间保持系统唤醒（caffeinate -i）"
+          "description": "在会话打开期间保持系统唤醒（macOS `caffeinate -i`）"
         },
         "display": {
           "label": "阻止显示器睡眠",
-          "description": "同时阻止显示器因空闲而睡眠（caffeinate -i -d）"
+          "description": "同时阻止显示器因空闲而睡眠（macOS `caffeinate -i -d`）"
         },
         "system": {
           "label": "阻止系统睡眠",
-          "description": "同时在使用交流电源时阻止所有系统睡眠，并声明用户处于活跃状态（caffeinate -i -d -s -u）"
+          "description": "同时在使用交流电源时阻止所有系统睡眠，并声明用户处于活跃状态（macOS `caffeinate -i -d -s -u`）"
         }
       }
     },
@@ -130,17 +132,17 @@ export const zhCN = {
     "prewalk.enabled": {
       "sourceHash": "216aa6a231a0c76446686388a1c9695577c3f6a126834d97294ea8ce835360c0",
       "label": "启用 Prewalk",
-      "description": "先使用当前模型启动，然后在规划提示的待办列表生成后，于首次编辑/写入时切换到快速/低成本模型（默认为“smol”角色）——由高能力模型制定计划、确认待办事项并开始实现，然后再交接。每个会话可通过 --prewalk / --no-prewalk 覆盖此设置"
+      "description": "启用 Prewalk（两阶段执行）：先由强模型制定计划、提交待办清单并开始初次实现，随后在首次编辑/写入时无缝交接给快速低成本的小模型（默认为 smol 角色）继续执行，以大幅降低长任务的 Token 成本与耗时；每个会话可通过 --prewalk / --no-prewalk 覆盖"
     },
     "advisor.syncBacklog": {
       "sourceHash": "165701896fc41f459ee7b994a82a7c71e213a02d8075b563ec1dcf521f03b7de",
       "label": "Advisor 同步积压阈值",
-      "description": "如果 Advisor 落后达到此轮数，主 agent 最多暂停 30 秒。关闭后禁用追赶延迟"
+      "description": "Advisor 同步追赶限速：当旁路审查模型（Advisor）因推理较慢而落后主会话过多轮次时，主动让主 Agent 最多暂停 30 秒等待其同步分析完毕，确保审查建议能及时生效而不是严重滞后"
     },
     "advisor.immuneTurns": {
       "sourceHash": "f54d6bf6fd6f4d76613f298768f6c5ce6720f18f0a5a6ff65800e8b0170ddd10",
       "label": "Advisor 免打扰轮数",
-      "description": "Advisor 的疑虑或阻断问题造成中断后，在接下来的这些主轮次中以不中断方式传递后续疑虑或阻断问题",
+      "description": "Advisor 免打扰轮数：当审查模型（Advisor）指出阻断性问题导致主 Agent 中断后，在后续指定的若干轮次内降级为非阻塞通知，避免 Advisor 连续打断主 Agent 正在进行的修复工作",
       "options": {
         "0": {
           "label": "0 轮",
@@ -164,6 +166,30 @@ export const zhCN = {
         }
       }
     },
+    "advisor.maxNotesPerUpdate": {
+      "sourceHash": "a3988ae01c34e684bf1cde5fa038e3c3cdde022e2dad0184f2c2128f08b9b926",
+      "label": "Advisor 单次更新建议数上限",
+      "description": "Advisor 每次提示词更新所接受的非阻塞建议条数上限（1–32 条；界面提供 1–5 条快捷选项）；阻塞性建议不受此限制",
+      "options": {
+        "1": {
+          "label": "1 条",
+          "description": "防刷屏（严格）"
+        },
+        "2": {
+          "label": "2 条"
+        },
+        "3": {
+          "label": "3 条"
+        },
+        "4": {
+          "label": "4 条",
+          "description": "默认"
+        },
+        "5": {
+          "label": "5 条"
+        }
+      }
+    },
     "git.enabled": {
       "sourceHash": "afd129831760ccaf6388c663de326f37d9a6001a1c19c1ebd99cc5aa47a5b5b0",
       "label": "启用 Git 集成",
@@ -175,14 +201,14 @@ export const zhCN = {
       "description": "每个提供商 ID（例如 \"openai\" 或 \"anthropic\"）允许的最大并发 LLM 请求数，由使用此配置根目录的本地 OMP 进程共享；未列出的提供商不受限制"
     },
     "providers.openai-codex.codeMode": {
-      "sourceHash": "8304d12aad301fe50bdc7a5f70d6fa24e9276a36604fbdf772ead17c8aa51c10",
+      "sourceHash": "596c36b70f679951fff0b98a161c980337a016fb0dcf16b81823d7f1d27d3343",
       "label": "Codex 代码模式",
-      "description": "将 Codex 的 code_mode_only 模型（GPT-5.6）通过 eval 工具路由，以其作为程序化执行界面：直接工具界面缩减为 eval/ask/todo，其他所有会话工具都从 eval 单元格调用；行为与 codex-rs Code Mode 一致；'auto' 遵循模型目录标志"
+      "description": "将 Codex 的 code_mode_only 模型（GPT-5.6）通过 eval 路由；直接工具为 eval、ask、todo、yield、think、checkpoint 和 rewind；其他会话工具从 eval 单元格调用；行为与 codex-rs Code Mode 一致；'auto' 遵循模型目录标志"
     },
     "providers.openai-codex.codeModeDirectTools": {
-      "sourceHash": "cb5d737af3cdae08304bd5ec3a990c692c1591b9537723c415a0ac75473924cc",
+      "sourceHash": "21ff26a401f3283facc95e858d5ed2e4962094e914d2725d1cf4465beba42a50",
       "label": "Codex 代码模式直接工具",
-      "description": "Codex 代码模式启用时，除 eval/ask/todo 外仍可直接调用的额外工具名称"
+      "description": "Codex 代码模式的额外直接工具；标准直接工具为 eval、ask、todo、yield、think、checkpoint 和 rewind"
     },
     "modelRoleStorage": {
       "sourceHash": "559e85e5e98b03b3e4cea23294f68541afc94696dc64bf6325e9eed7b147b38b",
@@ -311,7 +337,7 @@ export const zhCN = {
     "statusLine.contextLine": {
       "sourceHash": "a6e9a4fea84d8ffac2518184d97a8c5b4e1043ac191b9f9828480a440a5ab008",
       "label": "上下文响应线",
-      "description": "左右区段之间的线如何反映上下文用量（仅限方框输入区）",
+      "description": "上下文用量响应线条：方框输入区样式下，控制状态栏左右区段之间的连接线如何随当前 Token 消耗量动态改变样式或颜色（从空闲到接近压缩阈值提供渐变视觉预警）",
       "options": {
         "off": {
           "label": "关闭",
@@ -349,7 +375,7 @@ export const zhCN = {
     "tools.artifactSpillThreshold": {
       "sourceHash": "7157deeeac05a4e657beeac07058f166739ab692f27309e7738f1e657f40b20f",
       "label": "Artifact 转存阈值（KB）",
-      "description": "工具输出超过此大小时会保存为 Artifact，尾部内容仍内联保留",
+      "description": "工具输出超过此大小时会保存为 Artifact，尾部内容仍行内保留",
       "options": {
         "1": {
           "label": "1 KB",
@@ -404,7 +430,7 @@ export const zhCN = {
     "tools.artifactTailBytes": {
       "sourceHash": "47ac77c90567ca3b5ca6c4c46a9fa35864fd0c00c48659681a1806a161e319c6",
       "label": "Artifact 尾部大小（KB）",
-      "description": "输出转存为 Artifact 时内联保留的尾部内容量",
+      "description": "输出转存为 Artifact 时行内保留的尾部内容量",
       "options": {
         "1": {
           "label": "1 KB",
@@ -443,7 +469,7 @@ export const zhCN = {
     "tools.artifactHeadBytes": {
       "sourceHash": "f4b40b1adba9611bd9b45f0016a885c8ef7df072e47759ba1c96291848429eea",
       "label": "Artifact 头部大小（KB）",
-      "description": "输出转存为 Artifact 时，与尾部一同内联保留的头部内容量（省略中间部分）；设为 0 时禁用，即仅保留尾部",
+      "description": "输出转存为 Artifact 时，与尾部一同行内保留的头部内容量（省略中间部分）；设为 0 时禁用，即仅保留尾部",
       "options": {
         "0": {
           "label": "0 KB",
@@ -518,7 +544,7 @@ export const zhCN = {
     "tools.artifactTailLines": {
       "sourceHash": "e54709115aa81897690e998b3ae088f9ab953e0fe8104df4b751e31d07e5c284",
       "label": "Artifact 尾部行数",
-      "description": "输出转存为 Artifact 时内联保留的尾部内容最大行数",
+      "description": "输出转存为 Artifact 时行内保留的尾部内容最大行数",
       "options": {
         "50": {
           "label": "50 行",
@@ -557,8 +583,8 @@ export const zhCN = {
     },
     "terminal.showImages": {
       "sourceHash": "a159e6cd98066aaa6624c660e328461a0b9a3ae60bea4d28ba3b9a9317a567e5",
-      "label": "显示内联图像",
-      "description": "在终端中内联渲染图像"
+      "label": "显示行内图像",
+      "description": "在终端中行内渲染图像"
     },
     "images.autoResize": {
       "sourceHash": "01763a5edf96de615ea3f2867d5548dd074eba52545bc3e8632705281405b490",
@@ -578,7 +604,7 @@ export const zhCN = {
     "images.urls.enabled": {
       "sourceHash": "6668d0fc0f483856d4f1efa6c0a8d97257cb5bb95d754844eedddf8c1ef0e6c8",
       "label": "以 URL 提供图像",
-      "description": "通过已配置的后端链发布传出图像，并向支持获取 URL 的提供商发送短 URL，而不是内联 base64。所有后端均失败或提供商获取失败时，会自动回退到内联方式"
+      "description": "通过已配置的后端链发布传出图像，并向支持获取 URL 的提供商发送短 URL，而不是行内 base64；所有后端均失败或提供商获取失败时，会自动回退到行内方式"
     },
     "images.urls.backends": {
       "sourceHash": "4f98377197314281ba2d05d43a217234aed49f599d70c6e8f646acf946591844",
@@ -851,20 +877,49 @@ export const zhCN = {
       "label": "渲染 Mermaid 图表",
       "description": "将 Mermaid 围栏代码块渲染为 ASCII 图表"
     },
+    "tui.reactions": {
+      "sourceHash": "049f992873a3508b160cc0f291f7b5ac0e9879ef704f83cfc486d8aa8f569ec8",
+      "label": "Agent 表情回应",
+      "description": "允许 Agent 在其气泡上使用 emoji 徽章对你的消息进行表情回应"
+    },
     "tui.codexResetFireworks": {
       "sourceHash": "150f764a7d40a4802168b27bf59d12a034537bbc7a30d9462045eb55a649adc1",
-      "label": "Codex 重置 Fireworks",
-      "description": "当 Codex 每周用量发生非计划重置，或新存入已保存的重置时，以覆盖顶部三分之一区域的 Fireworks 庆祝，并持续显示直至按下 Escape"
+      "label": "Codex 重置烟花动画",
+      "description": "当 Codex 每周用量发生计划外重置，或存入新的已保存重置时，在顶部三分之一区域显示烟花覆盖层进行庆祝，直至按 Escape 退出"
     },
     "tui.titleState": {
       "sourceHash": "e41e56d7808dedf42d616837f2f5c8bc62128b04393dfde7375f341bd3173351",
       "label": "终端标题运行状态",
       "description": "在终端标题的分隔符中显示 Agent 运行状态——工作时显示动态旋转指示器（Windows 上为静态的“:”），轮到你操作时显示“>”，Agent 等待你操作时显示“!”"
     },
+    "tui.titleSpinner": {
+      "sourceHash": "10cf78c9967cc918ea53b912f6523c223fba6a2e7b78ca41cbe81e931a792300",
+      "label": "终端标题加载动画",
+      "description": "终端标题中工作状态加载图标的字形集——盲文字符扫描、单点循环或 ASCII 安全线条",
+      "options": {
+        "braille": {
+          "label": "盲文",
+          "description": "经典 ⠋⠙⠹ 扫描动画（默认）"
+        },
+        "dots": {
+          "label": "圆点",
+          "description": "单个盲文圆点循环"
+        },
+        "line": {
+          "label": "线条",
+          "description": "用于无盲文支持字体的 ASCII - \\ | /"
+        }
+      }
+    },
     "tui.hyperlinks": {
       "sourceHash": "17abb4d9a27ec0a03cf1f312514bafaea2a6d968900a58a510c0efa0702bdea8",
       "label": "终端超链接",
       "description": "使用 OSC 8 超链接包装路径和 URL，以便通过终端原生方式点击打开（auto：检测支持情况；off：从不启用；always：无条件启用）"
+    },
+    "tui.mouse": {
+      "sourceHash": "fdc0edf9b46864674950977c195887b450e0b3bd2256f48efaca086c5cdd80d5",
+      "label": "鼠标点击聚焦",
+      "description": "鼠标点击聚焦：在终端中接管鼠标事件，点击可直接聚焦或跳转到对应的子代理卡片和 HUD 状态行；开启后终端原生的选中文本需按住 Shift+拖动，滚轮滚动需按住 Shift+滚轮"
     },
     "tui.tight": {
       "sourceHash": "babebba5a60583ce069f2446fa1db9b4ae0d360bbdba1fa24939eede65c85e94",
@@ -890,6 +945,25 @@ export const zhCN = {
         }
       }
     },
+    "display.pinnedAgents": {
+      "sourceHash": "01fb7f1651c02d82ca1765bf78b136248dd7cb94fe686af3beb2451d8bf3c16c",
+      "label": "固定 Agent 列表",
+      "description": "编辑器上方的活动 Agent 固定跳转列表（关闭隐藏；折叠显示若干行带展开按钮；完整列出全部）",
+      "options": {
+        "off": {
+          "label": "关闭",
+          "description": "隐藏固定跳转列表"
+        },
+        "collapsed": {
+          "label": "折叠",
+          "description": "显示若干行并带有展开按钮"
+        },
+        "full": {
+          "label": "完整",
+          "description": "始终列出所有活动 Agent"
+        }
+      }
+    },
     "display.smoothStreaming": {
       "sourceHash": "486ee99f103176ae2d9462988dea8a0f9438a6ef043971617093152706261425",
       "label": "平滑流式显示",
@@ -905,15 +979,20 @@ export const zhCN = {
       "label": "显示 token 用量",
       "description": "在助手消息中显示每轮的 token 用量"
     },
+    "display.showTurnTime": {
+      "sourceHash": "2054d1659068a18833574ff26edd6727a0f6996ad12a3f44b34f0e60f6d53756",
+      "label": "显示轮次耗时",
+      "description": "在助手消息的用量信息行上显示从提示词输入到让出控制权的完整耗时（包含工具调用）"
+    },
     "display.cacheMissMarker": {
-      "sourceHash": "c0983564d684a41f527fec15db91fc2787d805478403175150b6e4745a28c55c",
+      "sourceHash": "7f30aab5c9c647abfea2a3786bad1dec56f5622f0e0d3fb31eeac61b6d08a9f7",
       "label": "缓存未命中标记",
-      "description": "当某轮助手请求未命中提示词缓存时，在该轮上方显示分隔线"
+      "description": "提示词缓存未命中标记：当助手的某轮请求未命中 API 提示词缓存（Prompt Cache Miss）时在消息后方显示视觉分隔线，方便开发者直观排查上下文变化导致的延迟与计费激增"
     },
     "display.collapseCompacted": {
       "sourceHash": "3d1a8035908cf0f4bd1fa97382c6c9d20e0cf5f54a472c975b8c379c163c98f3",
       "label": "折叠已压缩的历史记录",
-      "description": "在实时对话记录中，将压缩前的历史记录折叠到摘要分隔线后；禁用后则完整内联显示对话记录，并在每个压缩点显示分隔线"
+      "description": "在实时对话记录中，将压缩前的历史记录折叠到摘要分隔线后；禁用后则完整行内显示对话记录，并在每个压缩点显示分隔线"
     },
     "showHardwareCursor": {
       "sourceHash": "3781f88d0b421103dab3efc168d0edae91abd2109a88ac1758430ea91c204c4d",
@@ -978,7 +1057,7 @@ export const zhCN = {
     "externalThinking": {
       "sourceHash": "69d744e4c7b128467b73fb22e49a6ef851a6492881b32aedb73ab4e3e03f440e",
       "label": "外部思考",
-      "description": "私有暂存区，不向用户显示。会禁用 GPT、Claude 和 Gemini 中受支持的推理功能",
+      "description": "外部思考模式：通过模型私有暂存区（Scratchpad）实现思考逻辑，内容不对最终界面展示，并禁用模型厂商自带的原生推理功能；请注意风险：部分提供商可能将此类私有伪装格式判定为异常请求",
       "warning": "风险自负：提供商已将此类请求标记为滥用行为，最严重可能触发账号级处置"
     },
     "model.loopGuard.enabled": {
@@ -1013,37 +1092,42 @@ export const zhCN = {
     },
     "inlineToolDescriptors": {
       "sourceHash": "87ae40514d48f7d5003ca8a5711e964cfbf2fc4e4e81f620a15a78dd9d4201b6",
-      "label": "内联工具描述符",
+      "label": "行内工具描述符",
       "description": "在系统提示词中呈现完整工具描述符，并移除提供商工具 schema 中顶层及嵌套的描述，使描述符文本只发送一次；自动模式会对 Gemini 模型启用此功能，对其他模型则禁用",
       "options": {
         "auto": {
           "label": "自动",
-          "description": "对 Gemini 模型内联描述符；其他模型仍将描述符保留在工具 schema 中"
+          "description": "对 Gemini 模型行内包含描述符；其他模型仍将描述符保留在工具 schema 中"
         },
         "on": {
           "label": "启用",
-          "description": "始终在系统提示词中内联描述符"
+          "description": "始终在系统提示词中行内包含描述符"
         },
         "off": {
           "label": "关闭",
-          "description": "仅将描述符保留在提供商工具 schema 中"
+          "description": "不在系统提示词中行内包含描述符"
         }
       }
     },
     "includeModelInPrompt": {
       "sourceHash": "45937695fa06b31503a51a895827f4517fdb35a24f4363fbbae01b6f1398dc33",
       "label": "在提示词中包含模型",
-      "description": "在系统提示词中呈现当前模型标识符，让智能体知道自身所用的模型"
+      "description": "在系统提示词中呈现当前模型标识符，让 Agent 知道自身所用的模型"
     },
     "includeWorkspaceTree": {
       "sourceHash": "d031ddfafddfd06218a9027babd05031004d17101d94048a3843019fa0dfe127",
       "label": "包含工作区目录树",
       "description": "在系统提示词中呈现工作区目录树。警告：修改文件后，这可能导致跨会话的提示词缓存失效"
     },
+    "skillful": {
+      "sourceHash": "ec1baf2583370639bf534118f525772373881dfc98f9b19a54ea336c632add50",
+      "label": "提示词列出技能",
+      "description": "在系统提示词中列出可用技能；禁用可节省上下文，并可在单个会话中使用 /skillful 切换"
+    },
     "workspace.additionalDirectories": {
       "sourceHash": "388baa951172642ecddd1294e85407ccf2e1d5ff687e0d89f783329a488fa37d",
       "label": "附加工作区目录",
-      "description": "作为额外根目录添加到每个会话的其他工作区目录（多根工作区）；可通过 /add-dir 和 /remove-dir 实时管理；相对路径以 cwd 为基准解析，建议使用绝对路径；系统会告知 agent 这些根目录存在，且可对其执行 read、grep 和 glob"
+      "description": "作为额外根目录添加到每个会话的其他工作区目录（多根工作区）；可通过 /add-dir 和 /remove-dir 实时管理；相对路径以 cwd 为基准解析，建议使用绝对路径；系统会告知 Agent 这些根目录存在，且可对其执行 read、grep 和 glob"
     },
     "personality": {
       "sourceHash": "fafcc92b52f12d1f9436f019b50268e8bca4c3ddd45bfaa69503e36ef71a3930",
@@ -1324,12 +1408,12 @@ export const zhCN = {
     },
     "tier.subagent": {
       "sourceHash": "71d729b19e0a181732ce4378597ccbe96e15412cbcfb1530ce534738596a5a97",
-      "label": "服务层级 — 子智能体",
-      "description": "生成的任务/Eval 子智能体所用的服务层级。继承 = 与主智能体当前各模型系列的实时层级一致（会跟随 /fast）；选择具体值后，会将其应用于子智能体模型所属的系列",
+      "label": "服务层级 — 子代理",
+      "description": "生成的任务/Eval 子代理所用的服务层级。继承 = 与主 Agent 当前各模型系列的实时层级一致（会跟随 /fast）；选择具体值后，会将其应用于子代理模型所属的系列",
       "options": {
         "inherit": {
           "label": "继承",
-          "description": "与主智能体当前各模型系列的实时层级一致"
+          "description": "与主 Agent 当前各模型系列的实时层级一致"
         },
         "none": {
           "label": "无",
@@ -1337,7 +1421,7 @@ export const zhCN = {
         },
         "auto": {
           "label": "自动",
-          "description": "由提供商选择默认层级（OpenAI 系列）"
+          "description": "提供商默认层级选择（OpenAI 系列）"
         },
         "default": {
           "label": "默认",
@@ -1349,22 +1433,22 @@ export const zhCN = {
         },
         "scale": {
           "label": "Scale",
-          "description": "Scale Tier 额度（OpenAI 系列）"
+          "description": "Scale 层级额度（OpenAI 系列）"
         },
         "priority": {
-          "label": "Priority",
-          "description": "在生成模型所支持的每个系列上使用 Priority"
+          "label": "优先",
+          "description": "在所生成模型支持的每个系列上启用高优先级"
         }
       }
     },
     "tier.advisor": {
       "sourceHash": "2602dff21fbb6e6aca134fb191a29abf48d0d778bf3b51ac6b00ebd085a184bc",
       "label": "服务层级 — Advisor",
-      "description": "Advisor 模型所用的服务层级。无 = 标准处理；继承 = 与主智能体当前各模型系列的实时层级一致；选择具体值后，会将其应用于 Advisor 模型所属的系列",
+      "description": "Advisor 模型所用的服务层级。无 = 标准处理；继承 = 与主 Agent 当前各模型系列的实时层级一致；选择具体值后，会将其应用于 Advisor 模型所属的系列",
       "options": {
         "inherit": {
           "label": "继承",
-          "description": "与主智能体当前各模型系列的实时层级一致"
+          "description": "与主 Agent 当前各模型系列的实时层级一致"
         },
         "none": {
           "label": "无",
@@ -1372,7 +1456,7 @@ export const zhCN = {
         },
         "auto": {
           "label": "自动",
-          "description": "由提供商选择默认层级（OpenAI 系列）"
+          "description": "提供商默认层级选择（OpenAI 系列）"
         },
         "default": {
           "label": "默认",
@@ -1384,11 +1468,11 @@ export const zhCN = {
         },
         "scale": {
           "label": "Scale",
-          "description": "Scale Tier 额度（OpenAI 系列）"
+          "description": "Scale 层级额度（OpenAI 系列）"
         },
         "priority": {
-          "label": "Priority",
-          "description": "在生成模型所支持的每个系列上使用 Priority"
+          "label": "优先",
+          "description": "在所生成模型支持的每个系列上启用高优先级"
         }
       }
     },
@@ -1415,9 +1499,14 @@ export const zhCN = {
       }
     },
     "retry.maxDelayMs": {
-      "sourceHash": "252e3f27ca0eab3fe21c55cfff7d5b89c02031ef02ab6171b9ebcfad146e55ea",
+      "sourceHash": "2419687df9ba8e1133e7797d3b2cdaf73c5657bbe9b0b574c7f340329bcb71af",
       "label": "最大重试延迟",
-      "description": "两次重试之间的最长等待时间，单位为 ms。当提供商要求等待的时间超过此值，且凭据或模型回退均未成功时，请求会快速失败，而不是休眠等待（例如 Anthropic 长达 3 小时的速率限制窗口）"
+      "description": "两次重试之间的最长等待时间（毫秒）；当提供商要求等待的时间超过此值，且凭据或模型回退均未成功时，请求会快速失败，而不是休眠等待（例如 Anthropic 长达 3 小时的速率限制窗口）；设为 0 表示禁用上限——允许会话在提供商声明的配额重置后自动恢复"
+    },
+    "retry.waitForUsageReset": {
+      "sourceHash": "4376f324f6b9672db734407b622bd1b156069b03b2ff3957965e235000457c29",
+      "label": "等待用量重置",
+      "description": "等待用量配额重置：当提供商返回限流且明确告知重置时刻时（如 Claude 的 5 小时周期或每周配额），让会话保持休眠并倒计时等待重置，避免因短时间内重试超限直接报错终止；按 Esc 可随时取消等待"
     },
     "retry.modelFallback": {
       "sourceHash": "3decae223a3b1229a676877586502fa56424b2f5d819d686e6531976e7e266d2",
@@ -1463,22 +1552,22 @@ export const zhCN = {
       "options": {
         "confirm": {
           "label": "交互式确认",
-          "description": "交互式会话在确认前继续使用主模型；后台智能体自动回退"
+          "description": "交互式会话在确认前继续使用主模型；后台子代理自动回退"
         },
         "auto": {
           "label": "自动回退",
-          "description": "始终选择下一个符合条件的已配置回退项"
+          "description": "始终选择下一个符合条件的已配置回退模型"
         },
         "fail-closed": {
-          "label": "失败时关闭",
-          "description": "不使用预留配额，也不选择回退项"
+          "label": "安全关闭",
+          "description": "不消耗预留配额，也不选择回退模型"
         }
       }
     },
     "retry.fallbackChains": {
-      "sourceHash": "51dba54d3e0507e9994d9680e3ea6e4b740e2e30967c342b64b8fac343db859e",
+      "sourceHash": "b5b1d50a5e01ed5490faa0549b40cfe828a5c636b80df5bac54b60f604a7330a",
       "label": "重试回退链",
-      "description": "将模型角色、模型选择器（\"provider/model-id\"）或提供商通配符（\"provider/*\"）映射到有序回退选择器的 JSON 对象，例如 {\"default\":[\"openai/gpt-4o-mini\"],\"google-antigravity/*\":[\"google/*\",\"google-vertex/*\"]}。只要对应模型/提供商处于活动状态，模型相关键就会生效，不受角色影响；\"provider/*\" 条目会保留失败模型的 id，仅替换提供商。带 id 前缀的通配符（\"openrouter/google/*\"）会为失败模型的裸 id 重新添加前缀（google-antigravity/gemini-x -> openrouter/google/gemini-x）；作为键使用时，仅匹配该前缀下属于该提供商的 id"
+      "description": "将模型角色、模型选择器（\"provider/model-id\"）或提供商通配符（\"provider/*\"）映射到有序回退选择器的 JSON 对象，例如 {\"default\":[\"openai/gpt-4o-mini\"],\"google-antigravity/*\":[\"google/*\",\"google-vertex/*\"]}；只要对应模型/提供商处于活动状态，模型相关键就会生效，不受角色影响；\"provider/*\" 条目会保留失败模型的 id，仅替换提供商；带 id 前缀的通配符（\"openrouter/google/*\"）会为失败模型的裸 id 重新添加前缀（google-antigravity/gemini-x -> openrouter/google/gemini-x），作为键使用时仅匹配该前缀下属于该提供商的 id；回退条目可携带明确的思考后缀（\"provider/model:low\"、\":high\"、\":max\"、\":off\"），裸条目继承失败模型的思考级别"
     },
     "retry.fallbackRevertPolicy": {
       "sourceHash": "fd3ba2e96202fb1c31c06bc11270ed09ccca1608e53e09f49e7da24ff5072739",
@@ -1503,7 +1592,7 @@ export const zhCN = {
     "steeringMode": {
       "sourceHash": "1dbd6d37fcad0666abb98b6393f8199fde7ea5d3377e8ec377484b2ab290e7bd",
       "label": "引导模式",
-      "description": "agent 工作时如何处理排队的消息"
+      "description": "Agent 工作时如何处理排队的消息"
     },
     "followUpMode": {
       "sourceHash": "3b75e4cf3397227fde0b75fc09e633ab0551fb519e4af3e53b1eda85336b77b8",
@@ -1514,6 +1603,30 @@ export const zhCN = {
       "sourceHash": "9e622569e0d0630e3c66dedc08ad030d9b023808ac484da7da240e6ddf349a7c",
       "label": "中断模式",
       "description": "引导消息何时中断工具执行"
+    },
+    "tui.vimMode": {
+      "sourceHash": "0d89fe8499868664bd47bbec278724a3ffe1a18fab88e21b57706db0094faa36",
+      "label": "Vim 编辑模式",
+      "description": "模态提示词编辑：Escape 退出插入模式；普通模式支持 hjkl、0、$、^、w、b、e、gg、G、数字前缀、x/D/C、dd/yy、p 和 u；操作符支持移动或文本对象（diw、ca(、dap）；v/V 启动可视选择区，支持 y 复制和 d 删除"
+    },
+    "tui.vimModeDisplay": {
+      "sourceHash": "9e287fe697790e65d7be3dfc6989cc52196cbb31654d01c350f70612f0dce4a6",
+      "label": "Vim 模式指示器",
+      "description": "当前 Vim 模式在状态栏中的显示方式",
+      "options": {
+        "text": {
+          "label": "文本",
+          "description": "完整模式名称——NORMAL、INSERT、VISUAL、V-LINE"
+        },
+        "icon": {
+          "label": "图标",
+          "description": "每个模式显示紧凑单字形图标"
+        },
+        "none": {
+          "label": "隐藏",
+          "description": "不在状态栏中显示模式"
+        }
+      }
     },
     "loop.mode": {
       "sourceHash": "b07cc1b459f11902c561c2e3cf55caf8abc38dcc0fdc644cff50895e2415e288",
@@ -1534,10 +1647,34 @@ export const zhCN = {
         }
       }
     },
+    "loop.conditionTimeoutMs": {
+      "sourceHash": "0f388024842816ed0a08e04b3e9d723c3494745bb165cc2fe730ce50045daf7f",
+      "label": "循环条件超时（ms）",
+      "description": "循环条件命令超时：使用 /loop --while / --until 自动循环执行时，每次执行检查条件 Shell 命令的最长等待时间（毫秒）；若条件命令卡死超时则立即终止循环以避免死锁，设为 0 表示不设超时",
+      "options": {
+        "0": {
+          "label": "无限制"
+        },
+        "10000": {
+          "label": "10 秒"
+        },
+        "30000": {
+          "label": "30 秒"
+        },
+        "120000": {
+          "label": "2 分钟"
+        }
+      }
+    },
+    "composer.recallClearedDrafts": {
+      "sourceHash": "d54a0ff8733b42c4f6431da178b244d9fd182fa2871c172ff4fa7e6b12f81024",
+      "label": "召回已清除草稿",
+      "description": "在退出前将通过 Ctrl+C 清除的草稿保留在本地上下键历史记录中；禁用仅影响后续的清除操作"
+    },
     "doubleEscapeAction": {
-      "sourceHash": "063c901595bbe734b02e39bda9a44e611fbb78a23ff2eb201f327af8f486100a",
+      "sourceHash": "1bee52f5a5a909d5866e475405aa578718d331968777e934d5c9cbe815b41038",
       "label": "双击 Escape 操作",
-      "description": "编辑器为空时按两次 Escape 执行的操作"
+      "description": "编辑器为空时按两次 Escape 执行的操作：打开对话记录倒带选择器、打开会话树或无操作"
     },
     "treeFilterMode": {
       "sourceHash": "336e6236bf92b823de458c000efb6bf5ff53b42bda4a88818954ecc7fa90a7c4",
@@ -1547,7 +1684,7 @@ export const zhCN = {
     "autocompleteMaxVisible": {
       "sourceHash": "955fde1d01067112cbdf5905f7ab30991108197b3de6b91b3e79701722e99063",
       "label": "自动补全项目数",
-      "description": "自动补下拉列表中最多显示的项目数（3–20）",
+      "description": "自动补全下拉列表中最多显示的项目数（3–20）",
       "options": {
         "3": {
           "label": "3 项"
@@ -1577,7 +1714,7 @@ export const zhCN = {
     "spelling.autocomplete": {
       "sourceHash": "d9b55815ecd31b7ccc75a178e35a03644d86e49938bd81c1892277ec39fca31f",
       "label": "单词自动补全（macOS）",
-      "description": "以内联提示显示 macOS 词典中的单词补全建议，可按 Tab 接受"
+      "description": "以行内提示显示 macOS 词典中的单词补全建议，可按 Tab 接受"
     },
     "spelling.autocorrect": {
       "sourceHash": "4a5b6e53dd344a0b69d7a078e42dd7023a91562c2f08d28110930e293d40ba38",
@@ -1695,7 +1832,7 @@ export const zhCN = {
     "magicKeywords.orchestrate": {
       "sourceHash": "68c202d555f9c46af61efbae142258cf1d9021e3a6d94c5539e8c673d6412132",
       "label": "Orchestrate 关键词",
-      "description": "允许单独出现的 orchestrate 附加其隐藏的多智能体编排说明"
+      "description": "允许单独出现的 orchestrate 附加其隐藏的多 Agent 编排说明"
     },
     "magicKeywords.workflow": {
       "sourceHash": "af2c75c349b2a979fa04ccb6d3567bc54a2afe58e2b56d53a11f8d9fab329578",
@@ -1705,12 +1842,12 @@ export const zhCN = {
     "completion.notify": {
       "sourceHash": "d7bbafdf7657307edb3701a7f72fd244443e376675a0901de9450911acbd276d",
       "label": "完成通知",
-      "description": "当智能体结束一个回合时通知"
+      "description": "当 Agent 结束一个轮次时发送通知"
     },
     "error.notify": {
       "sourceHash": "cb1fb099696ec586436217b93e7a988d4dcb5edacdc384bfa2b146381ea4c6c6",
       "label": "错误通知",
-      "description": "当智能体因错误而停止时通知"
+      "description": "当 Agent 因错误而停止时发送通知"
     },
     "ask.timeout": {
       "sourceHash": "027cddc00c76b78c13fcb133b5cfc00872a7d672619b7b6f793c5229600ced2d",
@@ -1780,6 +1917,25 @@ export const zhCN = {
       "sourceHash": "89bef2a68721bdbe666342761933437f53783af7950ebe5ebccef2fe1f2f67b5",
       "label": "显示名称",
       "description": "向其他协作参与者显示的名称（默认：OS 用户名）"
+    },
+    "collab.autoStart": {
+      "sourceHash": "31c607b239cb23c1135ac9d295cb748b09d91961d17b32c446cfdde10480733a",
+      "label": "自动启动协作",
+      "description": "启动时自动开启远程协作：新会话启动时自动通过中继服务器生成协作房间并注册，使同事或远程终端可以通过链接即时接入查看或控制会话，切换会话时自动轮换房间 ID",
+      "options": {
+        "off": {
+          "label": "关闭",
+          "description": "仅在执行 /collab 时共享"
+        },
+        "view": {
+          "label": "仅查看",
+          "description": "自动托管；注册表分发只读链接（omp collab link --view）"
+        },
+        "control": {
+          "label": "控制",
+          "description": "自动托管；注册表分发可向会话发送提示词的控制链接"
+        }
+      }
     },
     "share.serverUrl": {
       "sourceHash": "2d5f4e2bac845ccb18e1cb811a71374a43cdd2cd15255db755b64340f45042b3",
@@ -1863,14 +2019,19 @@ export const zhCN = {
       "description": "上下文溢出时改用上下文窗口更大的模型，而不是进行压缩"
     },
     "extendedContext": {
-      "sourceHash": "d4e145bcc70245c2c0eef52148ecb119dce538968c0be49648634a33e2ec48ac",
+      "sourceHash": "871bf725950ada3db805571e5a2f509029a0946896dde3a2fd13bc02ca4fd53e",
       "label": "扩展上下文",
-      "description": "在超过阈值后会额外计费的模型上使用高级长上下文窗口（例如 GPT-5.6 1M 的输入超过 272K 时按 2 倍计费）；关闭后会将其限制在标准定价窗口内"
+      "description": "在受支持处使用更大的上下文窗口；可能产生更高阶费用；关闭时保持默认或标准定价窗口"
     },
     "compaction.enabled": {
       "sourceHash": "4ac5ffc1935d44f855f3dafe2451e8b3fab68feda0bdb05960fe6194239e8b71",
       "label": "自动压缩",
       "description": "上下文过大时自动进行压缩"
+    },
+    "compaction.experimentalContextManagement": {
+      "sourceHash": "80b9d3addda671eaabed67c5f0b654b2881ae95bb2fb7f62310ee25986b4bb44",
+      "label": "基于笔记的上下文持久化（实验性）",
+      "description": "基于笔记的上下文持久化管理（实验性）：在上下文窗口压缩溢出时，不仅保留简短摘要，还将关键决策记录为持久笔记，并保留可搜索的原始对话历史，避免超长会话丢失重要前置信息；修改后需重启会话更新可用工具"
     },
     "compaction.midTurnEnabled": {
       "sourceHash": "30a9f300a23209f2285c33fa018705a6a59626ade7ffee0ca065a4c4ace2f755",
@@ -1878,29 +2039,29 @@ export const zhCN = {
       "description": "在轮次中安全的工具循环边界处、发起下一次提供商请求前检查阈值"
     },
     "compaction.methodOrder": {
-      "sourceHash": "1c15c2ea4638a3ca487e2cd5ebfd37eca50599c49d98cf038218d4b97f515a73",
+      "sourceHash": "a620bcc8781ba133237d86dd9301a2e98210dbc2451e51b19066638faa02715c",
       "label": "压缩方法顺序",
-      "description": "自动维护上下文时首选的回退顺序；方法不可用或失败时会转到下一个选项",
+      "description": "自动维护上下文时首选的回退顺序；不可用或失败的方法将推进到下一个选择",
       "options": {
         "remote": {
-          "label": "OpenAI 服务器压缩",
-          "description": "当前路由支持时，使用提供商原生的 OpenAI 兼容服务器压缩"
+          "label": "服务器压缩",
+          "description": "当前路由支持时使用提供商原生的上下文压缩机制（如 OpenAI Responses compact、Anthropic 压缩测试版），无需消耗本地轮次"
         },
         "snapcompact": {
           "label": "Snapcompact",
-          "description": "将历史记录存档为高密度位图图像，供当前视觉模型读回；无需 LLM 调用"
+          "description": "将历史上下文转换为紧凑的文本位图图像交由视觉模型读回，彻底避免纯文本上下文膨胀，零额外 LLM 消耗"
         },
         "handoff": {
           "label": "Handoff",
-          "description": "生成 Handoff 文档，并以其作为压缩摘要继续"
+          "description": "生成结构化的工作交接文档并以此作为新上下文的起点，适合阶段性任务归档"
         },
         "soft": {
           "label": "软压缩",
-          "description": "不使用服务器压缩，通过压缩模型就地生成摘要"
+          "description": "调用专门的压缩模型对过长对话就地生成阶段性总结摘要"
         },
         "shake": {
           "label": "Shake",
-          "description": "无需 LLM 调用，就地丢弃可恢复的大体量内容"
+          "description": "就地剔除先前读取的文件内容等已被后续覆盖或可重新获取的大体量工具输出，不消耗 LLM 即可瘦身"
         }
       }
     },
@@ -1964,29 +2125,29 @@ export const zhCN = {
       }
     },
     "compaction.thresholdTokens": {
-      "sourceHash": "9c130d23e8202e79841e683de3ac0f4657ed07929a27b96512e940d2086fd7a0",
+      "sourceHash": "bda8820a3ecfeebba826c104afb1d736c0ad747430e5ff6daab74305426e1dd2",
       "label": "压缩 token 限制",
       "description": "用于上下文维护的固定 token 限制；设置后会覆盖百分比阈值",
       "options": {
         "25000": {
           "label": "25K token",
-          "description": "200K 窗口的四分之一"
+          "description": "200K 窗口的 1/8"
         },
         "50000": {
           "label": "50K token",
-          "description": "200K 窗口的一半"
+          "description": "200K 窗口的 1/4"
         },
         "100000": {
           "label": "100K token",
-          "description": "200K 窗口的一半"
+          "description": "200K 窗口的 1/2"
         },
         "150000": {
           "label": "150K token",
-          "description": "200K 窗口的四分之三"
+          "description": "200K 窗口的 3/4"
         },
         "200000": {
           "label": "200K token",
-          "description": "完整的标准上下文窗口"
+          "description": "完整标准上下文窗口"
         },
         "300000": {
           "label": "300K token",
@@ -2177,7 +2338,7 @@ export const zhCN = {
     "snapcompact.shape": {
       "sourceHash": "05247a86267c78b1d5f7aab1d5d9a6f8fc5e281bd4d426e5e00cf23e32732a63",
       "label": "Snapcompact 形状",
-      "description": "Snapcompact 呈现文本时使用的帧形状（用于压缩存档和内联图像）；自动模式会选择针对当前模型调优的形状",
+      "description": "Snapcompact 呈现文本时使用的帧形状（用于压缩存档和行内成像）；自动模式会选择针对当前模型调优的形状",
       "options": {
         "auto": {
           "label": "自动",
@@ -2259,9 +2420,9 @@ export const zhCN = {
       "description": "离开分支时提示生成摘要"
     },
     "memory.backend": {
-      "sourceHash": "2cd24fee740802505c8ad86bdeca273e02d0e56a9ef534494568d3fe796c3fd1",
+      "sourceHash": "ad3a03ccc4288854806fc03aedfde6090f15626d0cbda4e6b6037ecc7dbae794",
       "label": "记忆后端",
-      "description": "关闭、本地摘要流程、Mnemopi SQLite 或 Hindsight 远程记忆",
+      "description": "记忆子系统后端：选择会话间经验记忆的管理方式；支持本地文件摘要、Mnemopi（本地 SQLite 向量/全文检索）、Hindsight（远程知识图谱记忆服务）或 Sharpshooter（后台自动整理架构/产品设计决策文件）",
       "options": {
         "off": {
           "label": "关闭",
@@ -2277,14 +2438,23 @@ export const zhCN = {
         },
         "mnemopi": {
           "label": "Mnemopi",
-          "description": "基于本地 SQLite 的召回和保留后端，可选使用嵌入"
+          "description": "基于本地 SQLite 的召回/保留后端，可选使用嵌入"
+        },
+        "sharpshooter": {
+          "label": "Sharpshooter",
+          "description": "低摩擦门控的项目决策文件（架构/产品/风格），在后台整合"
         }
       }
+    },
+    "sharpshooter.model": {
+      "sourceHash": "3013b8f5bec1695adf5e27718283ad929533280958a8d82488de34574f7e5631",
+      "label": "Sharpshooter 模型",
+      "description": "Sharpshooter 记忆模型：在后台自动从对话中提取项目架构、产品和代码规范决策并整合为决策文件时所使用的模型；留空默认使用低消耗的 smol 模型角色"
     },
     "autolearn.enabled": {
       "sourceHash": "44c29b283026260e8d1cef589c74fa18d98d60f15406efc4d4787adda43fce94",
       "label": "自动学习（实验性）",
-      "description": "智能体停止后，提示其将经验写入记忆，并创建或增强相互隔离的托管技能"
+      "description": "Agent 停止后，提示其将经验写入记忆，并创建或增强相互隔离的托管技能"
     },
     "autolearn.autoContinue": {
       "sourceHash": "80235bbc373ec9cfac66d9faa79579dd73cbfc531f8c7c843c9003a09608e129",
@@ -2294,7 +2464,7 @@ export const zhCN = {
     "mnemopi.dbPath": {
       "sourceHash": "6edb10f1c642d197994b758ee93ac1ac5b13e48a8d3dd1222921a5371dc32122",
       "label": "Mnemopi DB 路径",
-      "description": "可选的 SQLite DB 路径，默认为智能体记忆目录"
+      "description": "可选的 SQLite DB 路径，默认为 Agent 记忆目录"
     },
     "mnemopi.bank": {
       "sourceHash": "1512e129c6007ed86b1f07ed6fa676303a57f7b09ff6bb48257a9c3b119298c7",
@@ -2486,7 +2656,7 @@ export const zhCN = {
     "ttsr.enabled": {
       "sourceHash": "541808c1c2d9860be005b1f934332241102bfc8d4290394026323baa6c08be0a",
       "label": "TTSR",
-      "description": "输出匹配规则模式时，在流式输出途中中断 agent（Time-Traveling Stream Rules）"
+      "description": "TTSR（时间旅行流式规则）：在模型流式生成过程中实时监测输出内容，一旦匹配到禁忌规则或幻觉模式立即掐断生成并回滚注入修正警告，防止模型在错误路线上继续浪费 Token"
     },
     "ttsr.contextMode": {
       "sourceHash": "7ec08542ba7f6364b9d3cc270984701cb49e7b432a087aa8a55b1733f2151aef",
@@ -2546,7 +2716,7 @@ export const zhCN = {
     "ttsr.builtinRules": {
       "sourceHash": "4e96af65e610826bf10d5b4eaf3c3a388b6d96dfd6ef3f6e3d708d338e560e40",
       "label": "内置规则",
-      "description": "加载 agent 随附的默认规则（可通过 ttsr.disabledRules 逐项覆盖）"
+      "description": "加载 Agent 随附的默认规则（可通过 ttsr.disabledRules 逐项覆盖）"
     },
     "ttsr.disabledRules": {
       "sourceHash": "5e7bfa671b845d9b22e305ac1722f4587d296e0c94919674b17a7d4fc0312369",
@@ -2591,6 +2761,11 @@ export const zhCN = {
       "label": "预览失败时中止",
       "description": "补丁预览失败时中止流式编辑工具调用"
     },
+    "edit.recoverInlineEdits": {
+      "sourceHash": "7343fa4d37e7952d3cb004d9456212f1aec27cb82f678f4d9cfaf881301f75b8",
+      "label": "恢复行内编辑负载",
+      "description": "恢复行内编辑有效负载：当模型出现幻觉、将本该调用 edit 工具的代码修改以普通 Markdown 文本直接回复在对话中时，自动捕获该文本并转换为实际的 edit 工具调用执行，避免操作中断"
+    },
     "edit.blockAutoGenerated": {
       "sourceHash": "76349d5a3618af7df9728d653e2300dfebd994ea89fc3de089e36c539afc857e",
       "label": "阻止编辑自动生成的文件",
@@ -2599,17 +2774,17 @@ export const zhCN = {
     "edit.enforceSeenLines": {
       "sourceHash": "5d82e3a4e7fd59e81cafcb000c76d0fb56c9812af68aa990838dc0985e29c6a9",
       "label": "强制已查看行防护",
-      "description": "拒绝锚定在先前读取或搜索中从未完整显示的行上的编辑"
+      "description": "已查看行安全防护：严格拒绝模型去修改在先前的 read 或 search 工具输出中从未被完整展示过的代码行，防止模型凭借幻觉盲改未读取的文件区域导致代码损坏"
     },
     "edit.blackbox.enabled": {
       "sourceHash": "3e403d8658ae30cfd8f943be790653e9a16d93afd8ff7fe67fae8f3c56e80725",
       "label": "记录解析回归",
-      "description": "编辑导致 AST 解析失败时，追加记录编辑前后的完整源代码"
+      "description": "记录语法解析回归快照：当模型编辑导致代码产生 AST 语法错误时，自动将修改前后的文件完整内容保存为诊断快照，便于排查模型破坏语法的具体破坏点"
     },
     "edit.autoRepair.enabled": {
       "sourceHash": "621fa98edfbf3f955e31b8f002900a418abf044e8c81d62bb8bd0d9825464cf8",
       "label": "自动修复解析回归",
-      "description": "编辑破坏文件的 AST 解析时，请求 smol 模型修复受损区域（通过重新解析验证；失败则回退为警告）"
+      "description": "自动修复语法解析回归：当编辑引入 AST 语法错误时，自动调用轻量级 smol 模型对损坏的代码片段进行语法自愈修复，并通过重新解析确认无误后再写入，大幅提高自动代码修改的成功率"
     },
     "readLineNumbers": {
       "sourceHash": "096db8072a2a6c6ffd0926fcfe1e20eef95b7f9fb2dd1e8786587609d27c4c51",
@@ -2619,7 +2794,7 @@ export const zhCN = {
     "read.defaultLimit": {
       "sourceHash": "0df2d7a44e406a4f46dc390661cf0f7225d437c74d67389509c325b6580ac1b2",
       "label": "默认读取上限",
-      "description": "agent 调用 read 时未指定上限所返回的默认行数",
+      "description": "Agent 调用 read 时未指定上限所返回的默认行数",
       "options": {
         "200": {
           "label": "200 行"
@@ -2680,8 +2855,8 @@ export const zhCN = {
     },
     "read.toolResultPreview": {
       "sourceHash": "818ce1d7d09673f627d8ac2af5d6e73160d332fcf10dfac3745d666784f58a41",
-      "label": "内联读取预览",
-      "description": "在对话记录中内联显示读取工具结果，而非摘要行"
+      "label": "行内读取预览",
+      "description": "在对话记录中行内显示读取工具结果，而非摘要行"
     },
     "lsp.enabled": {
       "sourceHash": "c01d690f5c32a9df560e180ced8e7f2f11f658097097e251a2576a8ada2f28e6",
@@ -2723,6 +2898,11 @@ export const zhCN = {
       "label": "Bash",
       "description": "启用 Bash 工具以执行 Shell 命令"
     },
+    "bash.allowCompoundCommands": {
+      "sourceHash": "1fde7f22fa33d2b89f13823aeb39413637be5d60710e95e7adb3846cb99f147a",
+      "label": "允许复合命令",
+      "description": "允许复合命令逐段审批：当模型执行形如 cmd1 && cmd2 的连续命令时，将其拆分逐个按安全策略进行审批，避免因整条命令中夹带未知语句而导致整体被误拦截或未经确认执行"
+    },
     "bash.autoBackground.enabled": {
       "sourceHash": "c2b67b462c2209f7b053ba2f287aeeebacd8ba9f072ada978b0aee8e3febcb4e",
       "label": "Bash 自动转入后台",
@@ -2751,7 +2931,7 @@ export const zhCN = {
     "shellMinimizer.enabled": {
       "sourceHash": "7d1d42845464a834e003deaebb23307815ade47face9053f86ed01ebcafcfb30",
       "label": "Shell 输出精简",
-      "description": "在将冗长的 Shell 输出（git、npm、cargo 等）返回给 agent 前进行压缩"
+      "description": "在将冗长的 Shell 输出（git、npm、cargo 等）返回给 Agent 前进行压缩"
     },
     "shellMinimizer.sourceOutlineLevel": {
       "sourceHash": "6030471b3459c8f2d696960dd824b202c2236e0f1da58680060f42e051552887",
@@ -2761,27 +2941,27 @@ export const zhCN = {
     "eval.py": {
       "sourceHash": "0740fbb1dc94dc8f443f3d69914e248de9580e4d2c1c64e6d3f28609c8b67d05",
       "label": "Python Eval 后端",
-      "description": "允许 Eval 工具将 Python 单元发送到 IPython 内核"
+      "description": "允许 Eval 工具将 Python 单元格发送到 IPython 内核"
     },
     "eval.js": {
       "sourceHash": "a17fdd6073eae8d7798a4bb1acae60498fc8ceba1cc2f6ca72696c9c5973b060",
       "label": "JavaScript Eval 后端",
-      "description": "允许 Eval 工具将 JavaScript 单元发送到进程内运行时"
+      "description": "允许 Eval 工具将 JavaScript 单元格发送到进程内运行时"
     },
-    "eval.rb": {
-      "sourceHash": "cbb62cf2a373a9e31155f0be2a46bdcd9c98e85cf350eab94665bc5302c8eaff",
-      "label": "Ruby Eval 后端",
-      "description": "允许 Eval 工具将 Ruby 单元发送到持久运行的 Ruby 内核"
+    "eval.tools.enabled": {
+      "sourceHash": "2e96c57ce727cdfeecb7574f8168793d3190c77d0081cfca527e44e7a7b98653",
+      "label": "Eval 自定义工具",
+      "description": "允许 Eval 动态定义工具：在 eval 执行代码时通过 @tool（Python）或 tool()（JS）就地注册临时工具，供后续派生的 task 或 workpool 子代理直接调用，方便处理复杂的自定义业务逻辑"
     },
-    "eval.jl": {
-      "sourceHash": "20b1df9219dd8d506b46323c69afe6a7f6fc561521667eae7810264a61682a00",
-      "label": "Julia Eval 后端",
-      "description": "允许 Eval 工具将 Julia 单元发送到持久运行的 Julia 内核"
+    "eval.workpool.freshAgents": {
+      "sourceHash": "5cf133fe8c2932fdb481d45a2c847a85f873d1801ee92d569999a3f5ed589482",
+      "label": "Workpool 独立子代理",
+      "description": "Workpool 独立子代理模式：在并发批处理工作项时，为队列中的每个任务启动全新的独立子代理，彻底隔离状态与上下文历史，避免复用 worker 造成前序任务的记忆污染"
     },
     "eval.autoBackground.enabled": {
       "sourceHash": "d0713760429801c3e288d9352e75b925d8d1242388ca38c19a6670d00f3dc032",
       "label": "Eval 自动转入后台",
-      "description": "自动将长时间运行的 Eval 单元转入后台，并在稍后返回结果"
+      "description": "自动将长时间运行的 Eval 单元格转入后台，并在稍后返回结果"
     },
     "python.kernelMode": {
       "sourceHash": "69392022c21bd03be4e91ab9e57071b19d0406a0a44e0f7087a1d984f722270b",
@@ -2792,16 +2972,6 @@ export const zhCN = {
       "sourceHash": "a29d689afcc75e70919d2ac226090eb23562e9bae59e3048819c7a675242e41e",
       "label": "Python 解释器",
       "description": "可选：指定确切 Python 可执行文件的路径。设置后将跳过 Python 运行时的自动发现"
-    },
-    "ruby.interpreter": {
-      "sourceHash": "3610fe2264feca47ce3370e61c53b540e62fbe0869156d9705ab8aef233d0c39",
-      "label": "Ruby 解释器",
-      "description": "可选：指定确切 Ruby 可执行文件的路径。设置后将跳过 Ruby 运行时的自动发现"
-    },
-    "julia.interpreter": {
-      "sourceHash": "14fec31d7d3a3d427d001983989d7fd35d6d1e1048b2dbb21b121fd0df3cb703",
-      "label": "Julia 解释器",
-      "description": "可选：指定确切 Julia 可执行文件的路径。设置后将跳过 Julia 运行时的自动发现"
     },
     "tools.approval": {
       "sourceHash": "b86dd87ee8c3c134840f82e8b8f6625564d6a277cb2d55b52552e55cc810f1d2",
@@ -2835,7 +3005,7 @@ export const zhCN = {
     "todo.reminders": {
       "sourceHash": "aac12c05d75a9ebf539305270a199d017913bb60281121259085393c89bb381d",
       "label": "待办提醒",
-      "description": "在停止前提醒智能体完成待办事项"
+      "description": "在停止前提醒 Agent 完成待办事项"
     },
     "todo.remindersMax": {
       "sourceHash": "2e3a4df81be20d09a0fd735caa96312f5591b92526f1d67173e3a028ab00163f",
@@ -2962,26 +3132,10 @@ export const zhCN = {
       "label": "生成图像",
       "description": "启用 generate_image 工具（文本生成图像和编辑）；tools.xdev 开启时，此工具会作为 xd:// 设备提供"
     },
-    "inspect_image.mode": {
-      "sourceHash": "6b6c2666202a9a0725938457eb054d55f464199699a35e5596347bf74659049a",
-      "label": "检查图像",
-      "description": "控制 inspect_image 工具，将图像理解委托给支持视觉能力的模型；'auto' 仅在当前模型不支持原生图像输入时提供该工具；'on' 始终提供；'off' 从不提供",
-      "options": {
-        "auto": {
-          "label": "自动（仅用于不支持视觉的模型）"
-        },
-        "on": {
-          "label": "开启"
-        },
-        "off": {
-          "label": "关闭"
-        }
-      }
-    },
     "computer.enabled": {
-      "sourceHash": "b9aeb3144becc0cb83634f83417be48d2fb7f21e68dcc7142fb1950e9afc1fdf",
-      "label": "计算机",
-      "description": "启用可编程的宿主机桌面控制工具（截图、输入、辅助功能）"
+      "sourceHash": "1700affcd921c7cf3f0ebb93ec01369b1ecebc8a2932ac54d4db784ae5af025e",
+      "label": "Computer",
+      "description": "启用可脚本化的宿主桌面 eval 预置环境（截图、输入、无障碍访问）"
     },
     "computer.display": {
       "sourceHash": "14af977285f7a02466d758697e30a16b5a46a926260fb40d3c033689371f2fc2",
@@ -2998,10 +3152,10 @@ export const zhCN = {
       "label": "计算机截图高度",
       "description": "合成截图的最大高度（像素）"
     },
-    "inspect_image.timeoutMs": {
-      "sourceHash": "47cbe1f7ee0817ec017252a2922f527a63d78973ee84aad7f48f8188f96d6496",
-      "label": "inspect_image 超时",
-      "description": "inspect_image 视觉模型调用的单次请求超时时间，单位为毫秒。提供商停滞时将快速失败并返回超时错误，而不会一直阻塞到手动中止。设为 0 可禁用超时",
+    "images.questionTimeoutMs": {
+      "sourceHash": "addb2c58be4eb11390500602f75075398a60ffae7ff3fe3c1ac5546ddb46b078",
+      "label": "图像提问超时",
+      "description": "read 工具使用 ?q= 进行图像提问时调用视觉模型的单次请求超时时间（毫秒）；停滞的提供商会快速失败并返回超时错误，而不是阻塞直到手动中止；设为 0 表示禁用超时",
       "options": {
         "0": {
           "label": "已禁用"
@@ -3071,9 +3225,9 @@ export const zhCN = {
       "description": "启用 ask 工具以交互方式向用户提问"
     },
     "browser.enabled": {
-      "sourceHash": "2f1cc72798340b637dca1a79bff9f73ab96c60e32bf229bcc36fe04f17092882",
+      "sourceHash": "9a40a3d49291aca625cad9b74b5cefdf7a8226e527286f22819835830e252129",
       "label": "浏览器",
-      "description": "启用 browser 工具，以使用 puppeteer 对 Chromium 进行脚本化自动操作"
+      "description": "启用浏览器 eval 预置环境，用于脚本化 Chromium 自动化（Puppeteer）"
     },
     "browser.cdpUrl": {
       "sourceHash": "941af626f521a3da139ff1a08a75fe114ac545c1435070096810f16a01a404ce",
@@ -3081,9 +3235,9 @@ export const zhCN = {
       "description": "默认的 HTTP CDP 发现端点（例如 http://127.0.0.1:9222），用于连接现有浏览器，而非启动浏览器。工具调用中显式指定的 app.cdp_url 或 app.path 优先"
     },
     "browser.relay": {
-      "sourceHash": "6a166cbe632ac28e037750b4bd7958e2962d65bb7623a87a0d69530fe74e64ad",
+      "sourceHash": "e511bad991ea61d39fbf1eaf2bad8df691c4083d87cc335fe951c481b5765988",
       "label": "浏览器 Relay",
-      "description": "通过 omp browser relay 驱动你自己的 Chrome 标签页。只需安装一次扩展（`omp browser-relay install`）；browser 工具需要时，relay 服务器会自动启动。优先级高于浏览器 CDP URL；可设置 PI_BROWSER_RELAY=0 或 PI_BROWSER_RELAY=1 覆盖此设置"
+      "description": "通过 omp 浏览器中继驱动你自己的 Chrome 标签页；安装扩展一次（`omp browser-relay install`）；中继服务器会在浏览器预置环境需要时自动启动；优先级高于浏览器 CDP URL；可设置 PI_BROWSER_RELAY=0 或 PI_BROWSER_RELAY=1 覆盖"
     },
     "browser.relayUrl": {
       "sourceHash": "6b961b3c49b9ab178a7ee5aa2b8811ea5ee3726af557a0eb72020d573f234c27",
@@ -3100,6 +3254,30 @@ export const zhCN = {
       "label": "cmux 浏览器",
       "description": "当 cmux 套接字可用时，使用 cmux WKWebView surface 执行浏览器自动化。可设置 PI_BROWSER_CMUX=0 或 PI_BROWSER_CMUX=1 覆盖此设置"
     },
+    "browser.freezeOnTurnEnd": {
+      "sourceHash": "4277a2304699c39a135dfc0706b3e20347f6ffec2d72f737b055432131d1ea00",
+      "label": "轮次结束时冻结浏览器标签页",
+      "description": "当轮次结束时冻结 OMP 自有的无头浏览器标签页，避免动画页面在空闲时消耗 CPU/GPU；标签页在下次使用时会自动解冻；在 open 时传入 persist:true 可免除冻结"
+    },
+    "browser.idleCloseSec": {
+      "sourceHash": "aa1f08b190ddb483c9b804d7815d80bd6d93dc3b9912f4b53f4423ea14b855fb",
+      "label": "浏览器空闲关闭超时",
+      "description": "关闭空闲超过指定秒数的 OMP 自有无头浏览器标签页（0 表示从不关闭；会话销毁时仍会回收）；仅适用于 OMP 启动的无头标签页，不影响 relay/CDP/外部启动的浏览器或其他会话的标签页",
+      "options": {
+        "0": {
+          "label": "从不"
+        },
+        "900": {
+          "label": "15 分钟"
+        },
+        "1800": {
+          "label": "30 分钟"
+        },
+        "3600": {
+          "label": "1 小时"
+        }
+      }
+    },
     "browser.screenshotDir": {
       "sourceHash": "849ec1d7056fb8bde68fdf6588baabc3023b45be9f188d41fff18bf115d24bd8",
       "label": "截图目录",
@@ -3108,17 +3286,41 @@ export const zhCN = {
     "tools.intentTracing": {
       "sourceHash": "c3bc5fc30301eb49b3cc478dbb62b7782646274d8b03d80334b189e35aa34d82",
       "label": "意图追踪",
-      "description": "要求 agent 在执行每个工具调用前说明其意图"
+      "description": "要求 Agent 在执行每个工具调用前说明其意图"
     },
     "tools.abortOnFabricatedResult": {
       "sourceHash": "1147a3e5a734d140cf86a651cb2306223b3d07d70c3c120e0a98fa6a4a37ffc1",
       "label": "遇到伪造工具结果时中止",
       "description": "使用带内工具调用时，如果模型在单轮生成中开始臆造工具结果，立即停止模型。禁用后，允许模型完成生成，然后丢弃伪造的后续内容"
     },
+    "tools.speculativeExecution.enabled": {
+      "sourceHash": "1f12be3843248d818e2a96881948136db49be31aae37d0bcc45ebc68dc1eacfa",
+      "label": "推测执行（实验性）",
+      "description": "启用推测执行（实验性性能加速）：在主循环等待上一操作结果的同时，预先并发执行安全的只读操作（如本地 read 读取与嵌套 eval），命中时消除等待延迟、未命中时安全丢弃结果；网络请求与文件写入不会被推测执行"
+    },
+    "tools.speculativeExecution.maxInFlight": {
+      "sourceHash": "769d65e3ef81d91c0623a45f5fdc1d04d31c52d58649715cdf5f5a6b4ddd6728",
+      "label": "推测执行并发数",
+      "description": "在正常分发前允许预先并发执行的已验证本地读取操作的最大数量",
+      "options": {
+        "1": {
+          "label": "1 个操作"
+        },
+        "2": {
+          "label": "2 个操作"
+        },
+        "3": {
+          "label": "3 个操作"
+        },
+        "4": {
+          "label": "4 个操作"
+        }
+      }
+    },
     "tools.maxTimeout": {
       "sourceHash": "4ae951013b8cae2104bd06404f0815d540f264609dd1a8df0e1f63e4e66fb787",
       "label": "工具最长超时时间",
-      "description": "agent 可为任何工具设置的最长超时时间，单位为秒（0 = 不限制）",
+      "description": "Agent 可为任何工具设置的最长超时时间，单位为秒（0 = 不限制）",
       "options": {
         "0": {
           "label": "不限制"
@@ -3145,36 +3347,10 @@ export const zhCN = {
       "label": "异步执行",
       "description": "启用异步 Bash 命令和后台任务执行"
     },
-    "async.pollWaitDuration": {
-      "sourceHash": "ea3cd10851a0547388cf4a5085941c8ce689f61d30f08a4a8bbef6587398a9b4",
-      "label": "最长轮询时间",
-      "description": "一次 `hub` wait 在返回当前状态前监视后台任务的时长。固定值每次都会等待指定时长。`smart` 会自适应调整：从 5s 开始，每次连续 wait 都会延长（最多 5m）；停止 wait 约一分钟后重置为 5s",
-      "options": {
-        "5s": {
-          "label": "5 秒"
-        },
-        "10s": {
-          "label": "10 秒"
-        },
-        "30s": {
-          "label": "30 秒"
-        },
-        "1m": {
-          "label": "1 分钟"
-        },
-        "5m": {
-          "label": "5 分钟"
-        },
-        "smart": {
-          "label": "智能",
-          "description": "默认 — 从 5s 到 5m 自适应延长，停止轮询后重置"
-        }
-      }
-    },
     "irc.timeoutMs": {
-      "sourceHash": "766818c41528eac8abe3f86a6dc616789af67dfc60e978e6f03fc8784b69bc27",
+      "sourceHash": "01d32270270fff742182772cd44026ef06b98c6394089491d9e16cfd2bbcc891",
       "label": "IRC 超时",
-      "description": "hub 消息等待（以及 send await:true）的默认超时时间，单位为毫秒；0 表示禁用超时",
+      "description": "hub send await:true 的超时时间（毫秒）；设为 0 表示禁用超时",
       "options": {
         "0": {
           "label": "已禁用"
@@ -3194,33 +3370,33 @@ export const zhCN = {
       }
     },
     "tools.xdev": {
-      "sourceHash": "5b018ccbad6b0a1ab910f0436dcf0c329ee89d074ccd0468d54c95b0961b2031",
-      "label": "xd:// 工具",
-      "description": "将不常用但可发现的工具挂载到 xd:// 设备 URL 下，通过 read/write 驱动，而不是在每次请求中都附带其 schema。未获准使用 write 工具的会话会跳过挂载，并在顶层公开所有工具。禁用后会在顶层公开所有已启用的工具"
+      "sourceHash": "967e3918eb22bfdbe19aa8626b6592ee3414bd6d3bc7443f0e8e40d7d774340a",
+      "label": "xd:// 设备化工具",
+      "description": "将不常用但可发现的工具（如 ast_edit、debug）挂载为 xd:// 虚拟设备，通过 read/write 读写驱动，避免在每次 API 请求中发送庞大的工具 schema 占用宝贵的提示词窗口；未授予 write 权限的会话将走受限挂载通道"
     },
     "tools.xdevDocs": {
       "sourceHash": "fc6e5da19feb97bd9399025f7981b9f82f188ba78c7584ca7067dce60849414f",
       "label": "xd:// 提示词文档",
-      "description": "选择要内联到系统提示词中的已挂载设备文档和 schema。Built-ins Only 会保持核心工具内联，而 MCP 和扩展工具则按需获取",
+      "description": "选择要在系统提示词中行内包含的已挂载设备文档和 schema；Built-ins Only 会保持核心工具行内包含，而 MCP 和扩展工具则按需获取",
       "options": {
         "inline": {
           "label": "所有设备",
-          "description": "内联每个已挂载设备的文档和 schema"
+          "description": "行内包含每个已挂载设备的文档和 schema"
         },
         "builtins": {
           "label": "仅内置设备",
-          "description": "内联内置文档；按需获取 MCP 和扩展文档"
+          "description": "行内包含内置文档；按需获取 MCP 和扩展文档"
         },
         "catalog": {
           "label": "仅目录",
-          "description": "列出所有设备；按需获取全部文档"
+          "description": "仅按需获取；提示词仅列出名称和说明"
         }
       }
     },
     "tools.xdevInlineDevices": {
       "sourceHash": "0279fc44afe81a76385f0de3555d15690d7477cf369022522bab6be5bd0cb847",
-      "label": "xd:// 内联设备",
-      "description": "当 xd:// 提示词文档设为 Built-ins Only 时，内联名称匹配这些 glob 模式的动态设备（例如 mcp__context_mode_*）。Catalog Only 会忽略此设置"
+      "label": "xd:// 行内设备",
+      "description": "当 xd:// 提示词文档设为 Built-ins Only 时，行内包含名称匹配这些 glob 模式的动态设备（例如 mcp__context_mode_*）；Catalog Only 会忽略此设置"
     },
     "mcp.enableProjectConfig": {
       "sourceHash": "29afcf86b9eacf7a9970e2d5dffaa82de8e08bbf810fa65e3cf04db6e300acfe",
@@ -3235,7 +3411,7 @@ export const zhCN = {
     "mcp.notifications": {
       "sourceHash": "93c3f2ce6818235aa68adbd4565f0b100e3f326bdc6cdf33d26eeb9985723b6e",
       "label": "MCP 更新注入",
-      "description": "将 MCP 资源更新注入 agent 对话"
+      "description": "将 MCP 资源更新注入 Agent 对话"
     },
     "mcp.notificationDebounceMs": {
       "sourceHash": "e29995ca2c17ba56e659b548eab599cc2b8fc22663caf692fd87dd7543ba4b53",
@@ -3251,6 +3427,16 @@ export const zhCN = {
       "sourceHash": "df706732ab4a9d9bd84663495ebdc6ea12a44ca13b84899925dc8453a32f2015",
       "label": "启动时进入计划模式",
       "description": "每个新会话开始时自动进入计划模式"
+    },
+    "plan.autosave": {
+      "sourceHash": "147992d843174000afa0bd4e2a4e72a874047e4de252f5b65bfdfae69c5b5e13",
+      "label": "自动保存计划",
+      "description": "在 plan 模式完成时自动将已批准的计划保存到磁盘"
+    },
+    "plan.autosaveDir": {
+      "sourceHash": "251c61a6727af91357e6c9d81d63f8426f6246c83344a7632e8a5b39a21eb7ea",
+      "label": "自动保存目录",
+      "description": "用于自动保存计划的目录；支持 ~、绝对路径和相对于 cwd 的路径；留空时使用 <project>/.omp/plans/"
     },
     "goal.enabled": {
       "sourceHash": "cd2485a44d3d132e0bdd9b973d5e3b6c13e03906f325a639c5dccad4e77cd9cb",
@@ -3272,18 +3458,19 @@ export const zhCN = {
       "label": "重新规划时刷新标题",
       "description": "在 todo init 重新规划后刷新生成的会话标题，除非标题由用户设置"
     },
-    "task.isolation.mode": {
-      "sourceHash": "049542c2c0c90873daf472563d1d83128d93bd83d4b21aa8c6f3c3fbce28022b",
-      "label": "隔离模式",
-      "description": "子代理使用的隔离后端。选择“自动”时，原生 PAL 会选取最佳可用后端（依次为支持 CoW 的文件系统、overlayfs/ProjFS，再回退到 Git worktree 或递归复制）",
+    "task.isolation.enabled": {
+      "sourceHash": "961516429072948ae8177dacbf8f2e54c09d5487d2882af0b03161abcd0481bc",
+      "label": "隔离子代理",
+      "description": "在工作区检出的隔离副本中运行子代理，并在运行完成后整合其变更"
+    },
+    "isolation.backend": {
+      "sourceHash": "a72b13a07a5e5f80c984f1d49464f393abad0fc62bee9bef516e11b314ab1003",
+      "label": "隔离后端",
+      "description": "子代理工作区隔离后端：控制子代理在独立目录执行任务时底层文件系统的克隆机制；支持写时复制（CoW，如 APFS/btrfs/Reflink）实现秒级克隆并共享已有的依赖（node_modules），无法克隆时自动回退为传统递归复制",
       "options": {
-        "none": {
-          "label": "无",
-          "description": "不使用隔离"
-        },
         "auto": {
           "label": "自动",
-          "description": "让 PAL 选取最佳可用后端"
+          "description": "由 PAL 选择最佳可用后端"
         },
         "apfs": {
           "label": "APFS",
@@ -3295,15 +3482,15 @@ export const zhCN = {
         },
         "zfs": {
           "label": "ZFS",
-          "description": "ZFS 快照和克隆"
+          "description": "ZFS 快照与克隆"
         },
         "reflink": {
           "label": "Reflink",
-          "description": "Linux FICLONE 逐文件 reflink"
+          "description": "Linux FICLONE 单文件 reflink"
         },
         "overlayfs": {
           "label": "Overlayfs",
-          "description": "Linux 内核 overlay（回退到 fuse-overlayfs）"
+          "description": "Linux 内核 overlay（或 fuse-overlayfs 回退）"
         },
         "projfs": {
           "label": "ProjFS",
@@ -3315,9 +3502,19 @@ export const zhCN = {
         },
         "rcopy": {
           "label": "递归复制",
-          "description": "优先使用 Git worktree，否则递归复制"
+          "description": "优先使用 git worktree，不可用时递归复制"
         }
       }
+    },
+    "worktree.clone": {
+      "sourceHash": "d8a9c9137dafe7fff714dbf7a5e96ebbc085844fae59f395fab97797c66cbe54",
+      "label": "克隆检出到 Worktree",
+      "description": "创建新工作树（Worktree）时，利用底层文件系统的写时复制（CoW）技术瞬时克隆当前目录，使 node_modules 或 target 等耗时的构建产物无需重新下载编译即可复用；文件系统不支持时自动回退为常规检出"
+    },
+    "worktree.cleanSource": {
+      "sourceHash": "4d35f684560894da43ae06091cb785ce2eabf253f82d0ebd7457653fdbb05f69",
+      "label": "在 /wt 时清理源检出",
+      "description": "使用 `/wt` 创建 worktree 时，在将变更结转后重置原检出的已跟踪变更并移除未跟踪文件"
     },
     "task.isolation.apply": {
       "sourceHash": "29b0ef82b835bcb7152164aa0d30db8cb8a91bf456bf4c507491fb94d1e5a9a3",
@@ -3357,36 +3554,36 @@ export const zhCN = {
     "worktree.base": {
       "sourceHash": "67235636a9eb78f6579823fd7379d25d76f743951cee9ce7c8df3c5dfa06ebf3",
       "label": "Worktree 基础目录",
-      "description": "代理管理的 worktree 的基础目录——任务隔离副本、`github` PR 检出和 `omp worktree` 清理均位于此处。未设置时使用 ~/.omp/wt。必须是绝对路径或以 ~ 开头的相对路径；其他相对路径会被忽略。环境变量 OMP_WORKTREE_DIR 的优先级更高"
+      "description": "Agent 管理的 worktree 基础目录——任务隔离副本、`github` PR 检出和 `omp worktree` 清理均位于此处；未设置时使用 ~/.omp/wt；必须是绝对路径或以 ~ 开头的相对路径，其他相对路径会被忽略；环境变量 OMP_WORKTREE_DIR 的优先级更高"
     },
     "task.eager": {
-      "sourceHash": "f8b67a58f5e4d8bd2c760a807d9b77c06a9f79be071a1ee1349ba65d36c548e8",
+      "sourceHash": "bb8fdeff73b831ee5a5ed25b4aa5696b2565a6c6c7a27ac6c5a196e1c2b367c7",
       "label": "优先委派任务",
-      "description": "推动将工作委派给子代理的强度",
+      "description": "推动将工作委派给子代理的倾向强度",
       "options": {
         "default": {
           "label": "默认",
-          "description": "由模型决定何时委派"
+          "description": "使用所选模型的策略；部分模型需要明确的委派请求"
         },
         "preferred": {
           "label": "优先",
-          "description": "向系统提示词添加委派指导"
+          "description": "向系统提示词添加委派指引"
         },
         "always": {
           "label": "始终",
-          "description": "添加提示词指导，并在首轮提醒进行委派"
+          "description": "提示词指引加上首轮委派提醒"
         }
       }
     },
     "task.batch": {
       "sourceHash": "17bcb5f41d9b1a207ef70fb90e66837f42e4d09f881b8b4aaec9d1fc9a82c791",
       "label": "批量任务调用",
-      "description": "将 task 工具切换为批处理结构：一次调用携带 { context, tasks[] }——每个条目对应一个子代理，可为每个条目指定可选的 agent（默认为会话的 spawn-policy agent）和隔离设置，并且必须提供共享上下文以添加到每项任务之前。启用 async.enabled=true 时，每次 spawn 都会作为独立的后台代理运行，并采用正常的空闲/停放生命周期；否则调用会阻塞，直至获得合并结果。禁用后恢复扁平的单次 spawn schema"
+      "description": "将 task 工具切换为批处理结构：一次调用携带 { context, tasks[] }——每个条目对应一个子代理，可为每个条目指定可选的 Agent（默认为会话的 spawn-policy agent）和隔离设置，并且必须提供共享上下文以添加到每项任务之前；启用 async.enabled=true 时，每次 spawn 都会作为独立的后台子代理运行，并采用正常的空闲/停放生命周期；否则调用会阻塞直至获得合并结果；禁用后恢复扁平的单次 spawn schema"
     },
     "task.enableEffort": {
       "sourceHash": "d6d2b80e6c10272591a12b32e3300b7c3973c280ab811c1c8978d3977ba5681c",
-      "label": "每任务 Effort",
-      "description": "在任务 spawn 中提供可选的 effort 参数，让调用方可以覆盖每个子代理的思考级别"
+      "label": "单任务推理强度（Effort）",
+      "description": "在任务 spawn 中提供可选的 effort 参数，允许调用方覆盖每个子代理的思考级别"
     },
     "task.maxConcurrency": {
       "sourceHash": "ce17d1cc5a19a4ca6fc5aa40ba6e5a029f71a3b6134872f9bec8944af8ba2085",
@@ -3471,13 +3668,13 @@ export const zhCN = {
     },
     "task.agentIdleTtlMs": {
       "sourceHash": "7efe60eca2665ba425a6142bd1e079e58bc8ec54a757aef5fd375820de5adae5",
-      "label": "代理空闲 TTL",
-      "description": "空闲子代理在停放到磁盘前保持驻留内存的时长（ms）。向已停放的代理发送消息或恢复代理时，会自动唤醒代理。设为 0 时，空闲代理会保持驻留内存直至退出"
+      "label": "子代理空闲 TTL",
+      "description": "空闲子代理在停放到磁盘前保持驻留内存的时长（毫秒）；向已停放的子代理发送消息或恢复会话时会自动唤醒；设为 0 时空闲子代理会保持驻留内存直至退出"
     },
     "task.softRequestBudget": {
       "sourceHash": "5d5687ce00353539149e55ba47f459454a0dc94f262b3e9d93161fe7893ead74",
       "label": "子代理软请求预算",
-      "description": "每个子代理的软请求预算（每次运行中的 assistant 请求数）。超出预算时会注入收尾引导通知（见 task.softRequestBudgetNotice）；达到预算的 1.5 倍时会强制停止运行，代理必须交出其部分发现。设为 0 将禁用此防护。内置的 scout/sonic 代理有更低的内置预算上限，因此低于该上限的值仍会应用于这些代理",
+      "description": "每个子代理的软请求预算（每次运行中的 assistant 请求数）；超出预算时会注入收尾引导通知（见 task.softRequestBudgetNotice）；达到预算的 1.5 倍时会强制停止运行，子代理必须让出其部分发现；设为 0 将禁用此防护；内置的 scout/sonic 代理有更低的内置预算上限，因此低于该上限的值仍会应用于这些代理",
       "options": {
         "0": {
           "label": "已禁用"
@@ -3501,8 +3698,8 @@ export const zhCN = {
     },
     "task.maxEffort": {
       "sourceHash": "60bcb5e4c2ba6ad9559407914d34a072ed21bf640595a261e53eb2cb55c0571d",
-      "label": "每次 Spawn 的最大 Effort",
-      "description": "task 工具每次 spawn 的 effort 提示所允许的最大推理强度。较低的值可防止调用方将子代理提升到此上限以上；默认值会保留模型支持的完整范围",
+      "label": "单次 Spawn 最大推理强度",
+      "description": "task 工具每次 spawn 的 effort 提示所允许的最大推理强度；较低的值可防止调用方将子代理提升到此上限以上，默认值保留模型支持的完整范围",
       "options": {
         "minimal": {
           "label": "最小",
@@ -3533,12 +3730,12 @@ export const zhCN = {
     "task.prewalk": {
       "sourceHash": "b43f65ff12cb93bed1674fc6b717e7a8cdac07d78ad989630c2fb2483514661d",
       "label": "通用任务 Prewalk",
-      "description": "为内置的通用 `task` 子代理启用 Prewalk：它先使用解析后确定的模型进行规划并开始实现，然后在首次编辑/写入时移交给“smol”角色。无论此开关如何，每代理覆盖项（task.agentPrewalk，可在 /agents 中配置）和用户代理的 `prewalk` frontmatter 都会生效"
+      "description": "为内置的通用 task 子代理启用 Prewalk 策略：子代理启动时先使用高能力主模型进行规划并着手实现，首次编辑/写入代码时自动交接给 smol 小模型执行，从而降低批量子任务的调用成本；每子代理覆盖项及 frontmatter 设置具有更高优先级"
     },
     "tasks.todoClearDelay": {
       "sourceHash": "5e27d42c31774338c633192c82cbe1f3bbc3b13040ed984fdb03a4c179511be6",
-      "label": "Todo 自动清除延迟",
-      "description": "已完成或已放弃的 todo 从 todo 小组件中移除前的延迟",
+      "label": "待办自动清除延迟",
+      "description": "从待办小组件中移除已完成或已放弃待办事项前的延迟时间",
       "options": {
         "0": {
           "label": "立即"
@@ -3605,7 +3802,7 @@ export const zhCN = {
       "description": "每个进程允许同时运行的 Ollama Cloud 子代理数量上限；设为 0 可禁用此提供商专属限制"
     },
     "providers.webSearchOrder": {
-      "sourceHash": "36d63ca68e9b9f88d60a224b9fa8e407d397050fd0002d1e088c644d82edbc8f",
+      "sourceHash": "904ea8f11031f86f68314fd8199f2dcf909d47388ee47bed6fac1b858065cad4",
       "label": "网页搜索提供商顺序",
       "description": "web_search 工具使用提供商的优先顺序；未列出的提供商随后仍按默认顺序使用",
       "options": {
@@ -3673,6 +3870,10 @@ export const zhCN = {
           "label": "Synthetic",
           "description": "需要 SYNTHETIC_API_KEY"
         },
+        "ollama": {
+          "label": "Ollama",
+          "description": "需要 OLLAMA_CLOUD_API_KEY"
+        },
         "searxng": {
           "label": "SearXNG",
           "description": "需要 SEARXNG_ENDPOINT 或 searxng.endpoint"
@@ -3704,7 +3905,7 @@ export const zhCN = {
       }
     },
     "providers.webSearchExclude": {
-      "sourceHash": "711d3026a206272e3c05ab9632cde61380f6ff319727420a071ac8393c078112",
+      "sourceHash": "3fc2810cb9e30c6342ec79ec58ca1b77d4c4b3369e644ef9b670eda28b63a4e6",
       "label": "排除的网页搜索提供商",
       "description": "web_search 绝不使用的提供商，即使作为回退也不使用",
       "options": {
@@ -3771,6 +3972,10 @@ export const zhCN = {
         "synthetic": {
           "label": "Synthetic",
           "description": "需要 SYNTHETIC_API_KEY"
+        },
+        "ollama": {
+          "label": "Ollama",
+          "description": "需要 OLLAMA_CLOUD_API_KEY"
         },
         "searxng": {
           "label": "SearXNG",
@@ -3849,7 +4054,7 @@ export const zhCN = {
       }
     },
     "providers.imageOrder": {
-      "sourceHash": "90a0169f0cc48a80b722ce4fa3ab1eb40a5e737cdaafa51a4ea4bdf0f1e1a43f",
+      "sourceHash": "c91eb934fb597f9a26094175ae1e19a4f43edace374bbc6ebd82dce12a7137a7",
       "label": "图像提供商顺序",
       "description": "图像生成提供商的优先顺序；未列出的提供商将遵循当前会话提供商和内置顺序",
       "options": {
@@ -3876,6 +4081,10 @@ export const zhCN = {
         "openrouter": {
           "label": "OpenRouter",
           "description": "需要 OPENROUTER_API_KEY"
+        },
+        "deepinfra": {
+          "label": "DeepInfra",
+          "description": "需要 DEEPINFRA_API_KEY"
         }
       }
     },
@@ -3929,9 +4138,9 @@ export const zhCN = {
       }
     },
     "providers.tts": {
-      "sourceHash": "c69feb4b954f95e45ecd25848391f66bc66a0a70d1c566a38b05df802c0b8553",
+      "sourceHash": "8b23ed48a532a364edc5651a5f030149f81ac174cb16b45fbcebf33cb7428323",
       "label": "TTS 提供商",
-      "description": "tts 工具使用的后端：本地端侧神经 TTS（Kokoro-82M）或 xAI Grok Voice",
+      "description": "tts 工具使用的后端：本地端侧神经 TTS（Kokoro-82M）、xAI Grok Voice 或 DeepInfra 语音",
       "options": {
         "auto": {
           "label": "自动",
@@ -3944,6 +4153,10 @@ export const zhCN = {
         "xai": {
           "label": "xAI Grok Voice",
           "description": "需要 xAI Grok OAuth 或 XAI_API_KEY；支持 MP3 或 WAV"
+        },
+        "deepinfra": {
+          "label": "DeepInfra 语音",
+          "description": "需要 DEEPINFRA_API_KEY；支持 MP3 或 WAV"
         }
       }
     },
@@ -4071,40 +4284,32 @@ export const zhCN = {
       }
     },
     "providers.tinyModel": {
-      "sourceHash": "af45f635f8b1f39292f713da104d517d7cd907ff041feef9d0949557c5d57f6e",
+      "sourceHash": "2c3ecd396b54999670365e97f1aa2ae761a03f252ae15e15ce9c0e3c8b1af29a",
       "label": "小型模型",
       "description": "会话标题模型：默认使用在线模型（/models 中的 TINY 角色，否则为 @smol），也可使用本地端侧模型",
       "options": {
         "online": {
           "label": "在线（TINY 角色，否则 @smol）",
-          "description": "在线生成标题：已分配时使用 TINY 模型角色（在 /models 中设置），否则使用在线回退（先使用 commit 角色，再使用 @smol）；无需下载本地模型，也不进行端侧推理"
+          "description": "在线标题生成：已分配时使用 TINY 模型角色（在 /models 中设置），否则使用在线回退（commit 角色，随后 @smol）；无需本地下载或端侧推理"
         },
-        "lfm2-350m": {
-          "label": "LFM2 350M",
-          "description": "推荐的本地模型；速度与质量最均衡，缓存占用约 212 MB"
+        "lfm2.5-230m": {
+          "label": "LFM2.5 230M",
+          "description": "推荐的本地模型；最快的 LFM2.5 选项，缓存约 214 MB"
         },
-        "qwen3-0.6b": {
-          "label": "Qwen3 0.6B",
-          "description": "最稳健的本地选项；首次加载较慢，缓存占用约 500 MB"
+        "lfm2.5-350m": {
+          "label": "LFM2.5 350M",
+          "description": "较大的 LFM2.5 选项，缓存约 292 MB；标题风格倾向简洁"
         },
-        "gemma-270m": {
-          "label": "Gemma 270M",
-          "description": "可用的最小本地选项；质量较低，缓存占用最小"
-        },
-        "qwen2.5-0.5b": {
-          "label": "Qwen2.5 0.5B",
-          "description": "均衡的本地回退；质量和缓存占用适中"
-        },
-        "lfm2-700m": {
-          "label": "LFM2 700M",
-          "description": "质量最高的本地选项；比 LFM2 350M 更大、更慢"
+        "falcon-h1-90m": {
+          "label": "Falcon H1 Tiny 90M",
+          "description": "体积最小的选项，缓存约 147 MB；在复杂提示词上保真度较低"
         }
       }
     },
     "providers.tinyModelDevice": {
-      "sourceHash": "a4e269dc5d6ee1f0f841474aed5761b8dbfdd90a8a632672b9a92bb913f4a1eb",
+      "sourceHash": "edcd3a6a11491078f10d16183da918649be9597b9354a4b8b80731538df2086b",
       "label": "小型模型设备",
-      "description": "本地小型模型（标题 + 记忆）使用的 ONNX 执行提供程序；默认仅使用 CPU 推理；环境变量 PI_TINY_DEVICE 会覆盖此设置",
+      "description": "本地小型模型（标题 + 记忆）的推理后端：ONNX 执行提供程序，或在 Apple 芯片上使用 `mlx` 下载 MLX 权重并通过 mlx-lm 运行；默认使用仅 CPU 的 ONNX；环境变量 PI_TINY_DEVICE 会覆盖此设置",
       "options": {
         "default": {
           "label": "默认",
@@ -4118,9 +4323,13 @@ export const zhCN = {
           "label": "CPU",
           "description": "仅使用 CPU 推理"
         },
+        "mlx": {
+          "label": "MLX",
+          "description": "通过 mlx-lm 使用 Apple 芯片 GPU（Python 子进程；macOS arm64）"
+        },
         "metal": {
           "label": "Metal",
-          "description": "Apple GPU 的 WebGPU 别名"
+          "description": "MLX 的别名"
         },
         "webgpu": {
           "label": "WebGPU",
@@ -4165,9 +4374,9 @@ export const zhCN = {
       }
     },
     "providers.tinyModelDtype": {
-      "sourceHash": "5261b1e5b5909d0b3ef1d5f71273bab0c8e09a5a15ec28316bbb9b22ee19c4a7",
+      "sourceHash": "b9f502c582012830474d5c7b38be3891178129c048dbc6cb0393e2efdee9166b",
       "label": "小型模型精度",
-      "description": "本地小型模型使用的 ONNX 量化/精度；默认使用各模型随附的 dtype（q4）；较低精度速度更快，较高精度更忠实；环境变量 PI_TINY_DTYPE 会覆盖此设置",
+      "description": "本地小型模型使用的 ONNX 量化/精度；默认使用各模型自带的 dtype（q4）；较低精度速度更快，较高精度更忠实；MLX 后端会忽略此项（其仓库已预量化为 4 位）；环境变量 PI_TINY_DTYPE 会覆盖此设置",
       "options": {
         "default": {
           "label": "默认",
@@ -4228,7 +4437,7 @@ export const zhCN = {
       }
     },
     "providers.memoryModel": {
-      "sourceHash": "335dc4298ae902660a108040ace262a3f331a9dbd60d7b6d2f52191f404debe1",
+      "sourceHash": "13ffec31e68791b5227341bd056faf08abbcd0806523d26d4ac8e4746df61ea3",
       "label": "记忆模型",
       "description": "Mnemopi 用于事实提取和整合的 LLM：默认使用在线模型（/models 中的 TINY 角色，否则使用 smol/remote），也可使用本地设备端模型",
       "options": {
@@ -4238,7 +4447,7 @@ export const zhCN = {
         },
         "qwen3-1.7b": {
           "label": "Qwen3 1.7B",
-          "description": "已禁用本地推理：onnxruntime-node 无法运行此 ONNX 导出中的 RotaryEmbedding 缓存更新"
+          "description": "仅限 MLX（providers.tinyModelDevice=mlx）：onnxruntime-node 无法运行此 ONNX 导出的 RotaryEmbedding 缓存更新"
         },
         "llama3.2:3b": {
           "label": "Llama 3.2 3B",
@@ -4259,7 +4468,7 @@ export const zhCN = {
       }
     },
     "providers.autoThinkingModel": {
-      "sourceHash": "d63d8eb9ef9f4e952292c5f182a6cfbc7f13e73ec566b6ed7b1d2d77aa437aa5",
+      "sourceHash": "042be0de21719b117a32d8cfda8bd94c4b9a9934fa25e6f278d9b1187a693ba3",
       "label": "自动思考模型",
       "description": "用于 `auto` 思考级别的难度分类器：默认使用在线模型（/models 中的 TINY 角色，否则使用 smol），也可使用本地设备端模型",
       "options": {
@@ -4269,7 +4478,7 @@ export const zhCN = {
         },
         "qwen3-1.7b": {
           "label": "Qwen3 1.7B",
-          "description": "已禁用本地推理：onnxruntime-node 无法运行此 ONNX 导出中的 RotaryEmbedding 缓存更新"
+          "description": "仅限 MLX（providers.tinyModelDevice=mlx）：onnxruntime-node 无法运行此 ONNX 导出的 RotaryEmbedding 缓存更新"
         },
         "llama3.2:3b": {
           "label": "Llama 3.2 3B",
@@ -4324,7 +4533,7 @@ export const zhCN = {
       }
     },
     "providers.unexpectedStopModel": {
-      "sourceHash": "b7338b417d08cce906e786e7a51de24b352d3f20fac7debbb5c57d70161c1239",
+      "sourceHash": "55e1e3d4dd350f7637e9d8fdf15a0a04a9c971a8e43d25b3b21ef3d8e643fed6",
       "label": "意外停止模型",
       "description": "用于 Smart 意外停止检测的分类器：默认使用在线模型（/models 中的 TINY 角色，否则为 smol），也可使用本地端侧模型",
       "options": {
@@ -4334,7 +4543,7 @@ export const zhCN = {
         },
         "qwen3-1.7b": {
           "label": "Qwen3 1.7B",
-          "description": "已禁用本地推理：onnxruntime-node 无法运行此 ONNX 导出中的 RotaryEmbedding 缓存更新"
+          "description": "仅限 MLX（providers.tinyModelDevice=mlx）：onnxruntime-node 无法运行此 ONNX 导出的 RotaryEmbedding 缓存更新"
         },
         "llama3.2:3b": {
           "label": "Llama 3.2 3B",
@@ -4393,21 +4602,21 @@ export const zhCN = {
       }
     },
     "providers.cacheRetention": {
-      "sourceHash": "0ee0512c854116d102b186956782e7b78c7c2aa1968ef643a299784bd7bb39b9",
+      "sourceHash": "32c98c396dca959be54ba20888597db7ae5bfbcf8953c1549b55fe8533e54bf8",
       "label": "提示词缓存保留期限",
-      "description": "传递给支持此设置的提供商的提示词缓存保留期限（Anthropic、Bedrock、OpenRouter、OpenAI）",
+      "description": "提示词缓存保留时长：向支持长效缓存的提供商指定上下文的保活 TTL（如 Anthropic/Bedrock/OpenAI）；设为 1 小时可保持较长时间不失效，设为 5 分钟则成本较低并在空闲时依靠保活请求维持热度",
       "options": {
         "auto": {
           "label": "自动",
-          "description": "使用提供商默认设置——Anthropic 使用 5m 缓存条目，并在空闲时通过 keep-alive 刷新维持热状态；PI_CACHE_RETENTION 仍然适用"
+          "description": "提供商默认设置——Anthropic OAuth 订阅者会话默认为 1 小时，API 密钥使用 5 分钟并通过空闲保活刷新维持热状态；PI_CACHE_RETENTION 仍然适用"
         },
         "short": {
           "label": "短（5m）",
-          "description": "缓存写入成本最低；空闲时，Anthropic 会通过受限的 keep-alive 刷新维持条目热状态"
+          "description": "缓存写入成本最低；空闲时 Anthropic 会通过受限保活刷新维持条目热状态"
         },
         "long": {
           "label": "长（1h）",
-          "description": "提供商支持时使用 1h TTL；写入成本更高，不发送 keep-alive 刷新请求"
+          "description": "提供商支持时使用 1 小时 TTL；写入成本更高，无保活刷新请求"
         },
         "none": {
           "label": "关闭",
@@ -4491,13 +4700,13 @@ export const zhCN = {
       }
     },
     "providers.fetch": {
-      "sourceHash": "675959ef4a06f43b25f17005278b9b56ae8e4ecffdae1e50abdda1b805aefa11",
+      "sourceHash": "b3f53bda97066dd97cc06e42194e06da96f6060bc5b50e0bff173a0b575066a0",
       "label": "Fetch 提供商",
       "description": "fetch/read URL 工具的读取后端优先级",
       "options": {
         "auto": {
           "label": "自动",
-          "description": "优先级：native > trafilatura > lynx > parallel > jina"
+          "description": "优先级：native > trafilatura > lynx > parallel > firecrawl > jina"
         },
         "native": {
           "label": "Native",
@@ -4515,6 +4724,10 @@ export const zhCN = {
           "label": "Parallel",
           "description": "需要 PARALLEL_API_KEY"
         },
+        "firecrawl": {
+          "label": "Firecrawl",
+          "description": "需要 FIRECRAWL_API_KEY"
+        },
         "jina": {
           "label": "Jina",
           "description": "使用 r.jina.ai 读取器（JINA_API_KEY 可选）"
@@ -4523,8 +4736,8 @@ export const zhCN = {
     },
     "codexResets.autoRedeem": {
       "sourceHash": "62c9eff8142dea889259d012830584ae489c637ba5fa623857fc9348f1873638",
-      "label": "Codex 自动兑换已保存的重置额度",
-      "description": "自动消耗已保存的 Codex 速率限制重置额度：当某轮对话卡住、账号因 5h 或每周窗口耗尽而被阻止，且没有其他账号可以接管时，恢复该账号；同时挽回即将过期的额度。unset 会在首次消耗前询问，yes 不经提示直接消耗，no 禁用这两项检查",
+      "label": "Codex 自动兑换重置额度",
+      "description": "自动兑换 Codex 重置额度：当模型触发 5 小时或每周配额限流导致会话阻塞，且没有备用账号接管时，自动消耗之前积攒保存的 Codex 重置额度来立即恢复会话，同时在已存额度即将过期前自动拯救兑换",
       "options": {
         "unset": {
           "label": "未设置",
@@ -4558,7 +4771,7 @@ export const zhCN = {
     "provider.appendOnlyContext": {
       "sourceHash": "c98ee8534acca533b8567ff2722eb49f8305266bf8dbdfdb5bcfcac9ac1da978",
       "label": "仅追加上下文",
-      "description": "缓存系统提示词和工具规范，并维护仅追加的消息日志，使提供商前缀缓存（DeepSeek、Xiaomi/SGLang、Anthropic）达到最高命中率；自动为已知的前缀缓存提供商启用",
+      "description": "锁定系统提示词与工具定义，并严格保持消息历史仅向前追加而不中途修改，从而最大化利用服务商的前缀 KV 缓存（如 DeepSeek、Anthropic、SGLang），大幅提升响应速度并降低缓存计费",
       "options": {
         "auto": {
           "label": "自动",
@@ -4592,7 +4805,7 @@ export const zhCN = {
     "extensionHandlers.toolCallTimeoutMs": {
       "sourceHash": "551d60ebd73f65ea6878dd7f2a3f7292931a7f3ea46fea182406d2cfaf6421cb",
       "label": "工具调用处理程序超时（ms）",
-      "description": "扩展 tool_call 处理程序在主动工作期间的超时时间，须为有限正数；无效值使用 30000ms，等待 OMP 所有的对话框的时间不计入其中"
+      "description": "扩展 tool_call 处理程序在主动工作期间的超时时间，须为有限正数；无效值使用 30000ms，等待 OMP 自有对话框的时间不计入其中"
     },
     "dev.autoqa": {
       "sourceHash": "2e0cddc4aea537ccce57783673e733efb69a641d2202909d0286b5511c973616",
