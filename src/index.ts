@@ -2,10 +2,14 @@ import { logger, type ExtensionFactory } from "@oh-my-pi/pi-coding-agent";
 import { applyTranslations } from "./apply-translations";
 import { getHostMetadata } from "./host-adapter";
 import { zhCN } from "./translations/zh-CN";
+import { hookSettingsUI } from "./ui-hook";
 
 const extension: ExtensionFactory = (pi) => {
   const result = applyTranslations(getHostMetadata(), zhCN);
-  if (result.status === "applied") return;
+  if (result.status === "applied") {
+    hookSettingsUI();
+    return;
+  }
 
   logger.error("omp-settings-zh failed closed", {
     status: result.status,
