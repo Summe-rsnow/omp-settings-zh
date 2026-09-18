@@ -3,9 +3,9 @@
 让官方 [Oh My Pi（OMP）](https://github.com/can1357/oh-my-pi) 的原生 `/settings` 面板显示简体中文。无需中文分支，不替换官方二进制，不改变设置行为。
 
 - 当前版本：`0.1.0`
-- 已验证宿主：OMP `18.2.1`
+- 已验证宿主：OMP `18.2.6`
 - 运行时：离线，无网络请求和遥测
-- 翻译来源：依据 OMP 18.2.1 官方英文 `SETTINGS_SCHEMA`，由本项目独立生成、精校与复核
+- 翻译来源：依据 OMP 18.2.6 官方英文 `SETTINGS_SCHEMA`，由本项目独立生成、精校与复核
 
 ## 设计边界
 
@@ -67,7 +67,7 @@ omp plugin link . --scope project
 
 检查契约：
 
-- `bun test`：单元测试和 OMP 18.2.1 宿主契约测试；
+- `bun test`：单元测试和 OMP 18.2.6 宿主契约测试；
 - `bun run typecheck`：TypeScript 类型检查；
 - `bun run coverage:check`：P0 翻译完整性；
 - `bun run drift:check`：路径、选项值和英文原文哈希漂移；

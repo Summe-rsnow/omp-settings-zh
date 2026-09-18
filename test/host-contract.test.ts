@@ -1,38 +1,33 @@
 import { describe, expect, test } from "bun:test";
-import { VERSION } from "@oh-my-pi/pi-coding-agent";
-import {
-  SETTINGS_SCHEMA,
-  SETTING_TABS,
-  TAB_GROUPS,
-  TAB_METADATA,
-} from "@oh-my-pi/pi-coding-agent/config/settings-schema";
-import { getAllSettingDefs } from "@oh-my-pi/pi-coding-agent/modes/components/settings-defs";
+import { getHostMetadata } from "../src/host-adapter";
 
 describe("OMP 18 host contract", () => {
   test("required exports resolve with the expected top-level structure", () => {
-    expect(VERSION).toBe("18.2.1");
-    expect(SETTING_TABS.length).toBeGreaterThan(0);
-    expect(Object.keys(SETTINGS_SCHEMA).length).toBeGreaterThan(0);
+    const host = getHostMetadata();
+    expect(host.version).toBe("18.2.6");
+    expect(host.tabs.length).toBeGreaterThan(0);
+    expect(Object.keys(host.schema).length).toBeGreaterThan(0);
 
-    for (const tab of SETTING_TABS) {
-      expect(TAB_METADATA[tab]).toEqual({
+    for (const tab of host.tabs) {
+      expect(host.tabMetadata[tab]).toEqual({
         label: expect.any(String),
         icon: expect.stringMatching(/^tab\./),
       });
-      expect(Array.isArray(TAB_GROUPS[tab])).toBeTrue();
+      expect(Array.isArray(host.tabGroups[tab])).toBeTrue();
     }
   });
 
   test("derived definitions match every settings-panel-eligible schema path", () => {
-    const panelPaths = Object.entries(SETTINGS_SCHEMA)
+    const host = getHostMetadata();
+    const panelPaths = Object.entries(host.schema)
       .filter(([, definition]) => {
-        if (!("ui" in definition)) return false;
+        if (!definition || !("ui" in definition)) return false;
         if (definition.type !== "number" && definition.type !== "array") return true;
         return "options" in definition.ui;
       })
       .map(([path]) => path)
       .sort();
-    const derivedPaths = getAllSettingDefs()
+    const derivedPaths = host.derivedDefinitions
       .map((definition) => String(definition.path))
       .sort();
 
@@ -40,16 +35,17 @@ describe("OMP 18 host contract", () => {
   });
 
   test("metadata targets are mutable in the supported host", () => {
-    const firstTab = SETTING_TABS[0];
-    const firstUiDefinition = Object.values(SETTINGS_SCHEMA).find(
-      (definition) => "ui" in definition,
+    const host = getHostMetadata();
+    const firstTab = host.tabs[0];
+    const firstUiDefinition = Object.values(host.schema).find(
+      (definition) => definition?.ui !== undefined,
     );
 
     expect(firstTab).toBeDefined();
     expect(firstUiDefinition).toBeDefined();
-    expect(Object.isFrozen(TAB_METADATA)).toBeFalse();
-    expect(Object.isFrozen(TAB_METADATA[firstTab!])).toBeFalse();
-    expect(Object.isFrozen(TAB_GROUPS)).toBeFalse();
+    expect(Object.isFrozen(host.tabMetadata)).toBeFalse();
+    expect(Object.isFrozen(host.tabMetadata[firstTab!])).toBeFalse();
+    expect(Object.isFrozen(host.tabGroups)).toBeFalse();
     expect(Object.isFrozen(firstUiDefinition!.ui)).toBeFalse();
   });
 });

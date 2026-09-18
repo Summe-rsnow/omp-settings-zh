@@ -2,7 +2,7 @@ import type { LocalePack } from "./types";
 
 export const zhCN = {
   "locale": "zh-CN",
-  "sourceOmpVersion": "18.2.1",
+  "sourceOmpVersion": "18.2.6",
   "tabs": {
     "appearance": "外观",
     "model": "模型",
@@ -43,7 +43,8 @@ export const zhCN = {
       "Power (macOS)": "电源（macOS）",
       "Agent": "Agent",
       "Git": "Git",
-      "Power": "电源"
+      "Power": "电源",
+      "Stream": "直播"
     },
     "context": {
       "General": "常规",
@@ -263,6 +264,11 @@ export const zhCN = {
       "sourceHash": "197428e1eb517d8a790eb25f0d4896fc7fbfc7337f2c2464a6b0e15a10d40046",
       "label": "输入区形态",
       "description": "输入编辑器和状态栏的视觉布局"
+    },
+    "composer.tokenRate": {
+      "sourceHash": "ab82c5efedfd6a27a06bfbd0a887aa528687853951a212eba3d071fc23188b01",
+      "label": "生成速率",
+      "description": "在工作状态行紧挨会话标题右侧显示实时的生成速率（tok/s）；根据流式增量估算，并在每条消息完成时由提供商计费的输出 token 数校正"
     },
     "statusLine.preset": {
       "sourceHash": "71345ec595ee2d489a73c8db38951177f4e732fbbfe7aedd74f549571698324e",
@@ -888,18 +894,22 @@ export const zhCN = {
       "description": "当 Codex 每周用量发生计划外重置，或存入新的已保存重置时，在顶部三分之一区域显示烟花覆盖层进行庆祝，直至按 Escape 退出"
     },
     "tui.titleState": {
-      "sourceHash": "e41e56d7808dedf42d616837f2f5c8bc62128b04393dfde7375f341bd3173351",
+      "sourceHash": "6e0c084b462e93a191bc78e133e22a80fbb13ce5f6328fef3fe6cc8bf33b0922",
       "label": "终端标题运行状态",
-      "description": "在终端标题的分隔符中显示 Agent 运行状态——工作时显示动态旋转指示器（Windows 上为静态的“:”），轮到你操作时显示“>”，Agent 等待你操作时显示“!”"
+      "description": "在终端标题的分隔符中显示 Agent 运行状态——工作时显示动态旋转指示器（WSL 下为静态的“:”），轮到你操作时显示“>”，Agent 等待你操作时显示“!”"
     },
     "tui.titleSpinner": {
-      "sourceHash": "10cf78c9967cc918ea53b912f6523c223fba6a2e7b78ca41cbe81e931a792300",
+      "sourceHash": "5d6af659ad89599e4bb2d1b8d4b0d44307156238d8772c75e505861bfefeaf69",
       "label": "终端标题加载动画",
-      "description": "终端标题中工作状态加载图标的字形集——盲文字符扫描、单点循环或 ASCII 安全线条",
+      "description": "终端标题中工作状态加载图标的字形集——盲文字符扫描、充填月相、单点循环或 ASCII 安全线条",
       "options": {
         "braille": {
           "label": "盲文",
           "description": "经典 ⠋⠙⠹ 扫描动画（默认）"
+        },
+        "pulse": {
+          "label": "脉冲",
+          "description": "月相充填 ○◑● 随后排空动画"
         },
         "dots": {
           "label": "圆点",
@@ -1961,6 +1971,16 @@ export const zhCN = {
       "sourceHash": "bf717b2155efc6c002c903822ef99b012b371981c7ad93ad75803e166ae7cb43",
       "label": "分享机密信息脱敏",
       "description": "上传前对 /share 快照运行机密信息混淆器（使用 secrets.* 配置）"
+    },
+    "stream.serverUrl": {
+      "sourceHash": "e10882886e0fe7cf46f0fadb98eeff1582720fb830505b2794c0922e50a80583",
+      "label": "直播服务器",
+      "description": "omp stream 使用的实时直播服务器（https://host[:port]）；观众可在 <base>/<你的 Stencil 用户名> 观看"
+    },
+    "stream.redactPatterns": {
+      "sourceHash": "7f4b864bed280004a737464a6a4474cd7ec9623a2b20aef26f78d19f4f6c0ed3",
+      "label": "额外脱敏正则表达式",
+      "description": "在环境变量、secrets.yml 中的值和内置凭据格式的基础上，对每条流式传输行额外进行脱敏的正则表达式列表"
     },
     "stt.enabled": {
       "sourceHash": "b9b82ee7366a472506048171907ab19ff8464381707ebbdd0c2d3a9a673acc4d",
@@ -3802,10 +3822,14 @@ export const zhCN = {
       "description": "每个进程允许同时运行的 Ollama Cloud 子代理数量上限；设为 0 可禁用此提供商专属限制"
     },
     "providers.webSearchOrder": {
-      "sourceHash": "904ea8f11031f86f68314fd8199f2dcf909d47388ee47bed6fac1b858065cad4",
+      "sourceHash": "2be2df5418efa685bd5bcd66ec421caa8f6232679ed1b38ea9c52eaeee6d6c4f",
       "label": "网页搜索提供商顺序",
       "description": "web_search 工具使用提供商的优先顺序；未列出的提供商随后仍按默认顺序使用",
       "options": {
+        "parallel": {
+          "label": "Parallel",
+          "description": "配置后使用 API 身份验证；否则通过无密钥公共 MCP 搜索"
+        },
         "perplexity": {
           "label": "Perplexity",
           "description": "配置后使用身份验证；显式选择时可回退到匿名搜索"
@@ -3861,10 +3885,6 @@ export const zhCN = {
         "kimi": {
           "label": "Kimi",
           "description": "Kimi Code 搜索（需要通过 KIMI_SEARCH_API_KEY/MOONSHOT_SEARCH_API_KEY 或 /login kimi-code 提供 Kimi Code Console 密钥；不能使用 MOONSHOT_API_KEY）"
-        },
-        "parallel": {
-          "label": "Parallel",
-          "description": "需要 PARALLEL_API_KEY"
         },
         "synthetic": {
           "label": "Synthetic",
@@ -3905,10 +3925,14 @@ export const zhCN = {
       }
     },
     "providers.webSearchExclude": {
-      "sourceHash": "3fc2810cb9e30c6342ec79ec58ca1b77d4c4b3369e644ef9b670eda28b63a4e6",
+      "sourceHash": "c4e1bde581c90b0ac6b2339bd9aff06df9873fb8830798d945d55bed25ca1002",
       "label": "排除的网页搜索提供商",
       "description": "web_search 绝不使用的提供商，即使作为回退也不使用",
       "options": {
+        "parallel": {
+          "label": "Parallel",
+          "description": "配置后使用 API 身份验证；否则通过无密钥公共 MCP 搜索"
+        },
         "perplexity": {
           "label": "Perplexity",
           "description": "配置后使用身份验证；显式选择时可回退到匿名搜索"
@@ -3964,10 +3988,6 @@ export const zhCN = {
         "kimi": {
           "label": "Kimi",
           "description": "Kimi Code 搜索（需要通过 KIMI_SEARCH_API_KEY/MOONSHOT_SEARCH_API_KEY 或 /login kimi-code 提供 Kimi Code Console 密钥；不能使用 MOONSHOT_API_KEY）"
-        },
-        "parallel": {
-          "label": "Parallel",
-          "description": "需要 PARALLEL_API_KEY"
         },
         "synthetic": {
           "label": "Synthetic",
@@ -4280,6 +4300,25 @@ export const zhCN = {
         },
         "bm_fable": {
           "label": "Fable（英式男声）"
+        }
+      }
+    },
+    "providers.judgmentProvider": {
+      "sourceHash": "1c2e0325ac1a0e8b34e6277927535383e7be7732be9cc00f045119e2f5fec31c",
+      "label": "Judgment 判断提供商",
+      "description": "类型化判断（auto 思考难度判定、Smart 意外停止检测、Git AI 暂存、eval judge()）的首选后端；自动模式在认证后使用 TypeSafe，失败时依次回退至 tiny、smol、default，最后使用当前活动会话模型",
+      "options": {
+        "auto": {
+          "label": "自动",
+          "description": "认证后使用 TypeSafe，否则使用 LLM 桥接（默认）"
+        },
+        "typesafe": {
+          "label": "TypeSafe",
+          "description": "优先使用 TypeSafe；失败时通过在线模型角色回退"
+        },
+        "llm": {
+          "label": "LLM",
+          "description": "从不使用 TypeSafe；使用向 tiny/smol 或本地模型发送的关键词提示词"
         }
       }
     },
